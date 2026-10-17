@@ -5,6 +5,8 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.0](https://github.com/aescanes/scribe-of-lagash-focus/releases/tag/0.1.0) - 2026-10-17
+
 ### Added
 - Initial scaffold: build, test, lint and release tooling shared with the other
   Scribe of Lagash plugins.
