@@ -49,12 +49,13 @@ export default defineConfig([
 		// for "Scribe of Lagash"), used so the series' entries group together —
 		// sentence-casing it into "(Sl)" would mangle that on-purpose prefix. "Focus"
 		// goes in the case-sensitive `ignoreWords` list so the capital after the
-		// prefix survives, without touching lowercase "focus" elsewhere.
+		// prefix survives, without touching lowercase "focus" elsewhere. "Scribe"
+		// and "Lagash" are there for the same reason: they are the series name.
 		files: ["src/**/*.ts"],
 		rules: {
 			"obsidianmd/ui/sentence-case": [
 				"warn",
-				{ enforceCamelCaseLower: true, acronyms: ["SL"], ignoreWords: ["Focus"] },
+				{ enforceCamelCaseLower: true, acronyms: ["SL"], ignoreWords: ["Focus", "Scribe", "Lagash"] },
 			],
 		},
 	},

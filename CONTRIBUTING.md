@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for your interest in contributing to Scribe of Lagash - Focus Mode.
+Thanks for your interest in contributing to Scribe of Lagash - Focus.
 This project is part of the **Scribe of Lagash** series — independent
 Obsidian plugins that help writers plan and write, each focused on one
 concern. This particular plugin covers focus modes that help writers
@@ -32,7 +32,7 @@ every commit.
 
 To try your changes in a real vault, copy (or symlink) `manifest.json`,
 `main.js`, and `styles.css` into
-`<vault>/.obsidian/plugins/scribe-of-lagash-focus-mode/`, then enable the
+`<vault>/.obsidian/plugins/scribe-of-lagash-focus/`, then enable the
 plugin from Obsidian's Community Plugins settings. Reload the plugin (or
 Obsidian) after each rebuild to pick up changes.
 

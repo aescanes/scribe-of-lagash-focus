@@ -1,5 +1,5 @@
 {
-	"name": "scribe-of-lagash-focus-mode",
+	"name": "scribe-of-lagash-focus",
 	"version": "0.0.0",
 	"description": "Help writers concentrate on their work and remove distractions with configurable focus modes.",
 	"main": "main.js",

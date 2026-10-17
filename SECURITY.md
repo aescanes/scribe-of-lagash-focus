@@ -8,12 +8,12 @@ version before reporting an issue.
 ## Reporting a Vulnerability
 
 Please report vulnerabilities through GitHub by
-[opening an issue](https://github.com/aescanes/scribe-of-lagash-focus-mode/issues/new)
+[opening an issue](https://github.com/aescanes/scribe-of-lagash-focus/issues/new)
 in this repository, with a description of the issue and steps to reproduce it.
 You should get a response within a few days.
 
 If the issue is sensitive and you would rather not disclose it publicly, use
-GitHub's [private vulnerability reporting](https://github.com/aescanes/scribe-of-lagash-focus-mode/security/advisories/new)
+GitHub's [private vulnerability reporting](https://github.com/aescanes/scribe-of-lagash-focus/security/advisories/new)
 instead.
 
 ## Supply-chain posture

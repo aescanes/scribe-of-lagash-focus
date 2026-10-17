@@ -4,7 +4,7 @@ Guidance for AI agents working on this repository. Read this before making chang
 
 ## Concept
 
-**Scribe of Lagash - Focus Mode** is an Obsidian plugin that helps writers
+**Scribe of Lagash - Focus** is an Obsidian plugin that helps writers
 concentrate on their work and remove distractions through focus modes — named
 bundles of characteristics such as hiding the interface, typewriter scrolling,
 and dimming everything but the current paragraph or sentence. It is the third

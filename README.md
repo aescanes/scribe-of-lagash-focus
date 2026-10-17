@@ -1,4 +1,4 @@
-# Scribe of Lagash - Focus Mode
+# Scribe of Lagash - Focus
 
 ![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Minimum Obsidian version](https://img.shields.io/badge/obsidian-%E2%89%A51.10.0-8b6cef)
@@ -27,8 +27,8 @@ If this plugin helps your writing, you can support its development
 Requires Obsidian ≥1.10.0.
 
 Download `main.js`, `manifest.json`, and `styles.css` from the
-[latest release](https://github.com/aescanes/scribe-of-lagash-focus-mode/releases/latest)
-and copy them into `<vault>/.obsidian/plugins/scribe-of-lagash-focus-mode/`.
+[latest release](https://github.com/aescanes/scribe-of-lagash-focus/releases/latest)
+and copy them into `<vault>/.obsidian/plugins/scribe-of-lagash-focus/`.
 
 ## Scribe of Lagash Plugins
 
@@ -39,7 +39,7 @@ plugins for planning and writing stories:
   helps writers visualize their chapters and scenes.
 - **[Scribe of Lagash - Goals and Stats](https://community.obsidian.md/plugins/scribe-of-lagash-goals-stats)** ([github repository](https://github.com/aescanes/scribe-of-lagash-goals-stats)) —
   helps writers set goals and see detailed statistics for their story.
-- **[Scribe of Lagash - Focus Mode](https://github.com/aescanes/scribe-of-lagash-focus-mode)** —
+- **[Scribe of Lagash - Focus](https://github.com/aescanes/scribe-of-lagash-focus)** —
   helps writers focus on their work and remove distractions.
 
 Each plugin works fine on its own and none requires another. Visualization
@@ -119,13 +119,13 @@ npm run validate # typecheck + test + lint + lint:css (run before every commit)
   in for that single command.
 
 To try the plugin in a vault, copy (or symlink) `manifest.json`, `main.js`,
-and `styles.css` into `<vault>/.obsidian/plugins/scribe-of-lagash-focus-mode/`,
+and `styles.css` into `<vault>/.obsidian/plugins/scribe-of-lagash-focus/`,
 then enable it from Obsidian's Community Plugins settings.
 
 ## Contributing
 
 Found a bug, or have a feature request? Open one on the
-[GitHub Issues page](https://github.com/aescanes/scribe-of-lagash-focus-mode/issues) —
+[GitHub Issues page](https://github.com/aescanes/scribe-of-lagash-focus/issues) —
 there's a template for each.
 
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, code conventions, and the PR

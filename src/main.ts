@@ -32,7 +32,7 @@ export default class ScribeFocusModePlugin extends Plugin {
 
 		// No default hotkey (plugin guidelines): bind one in Hotkeys.
 		this.addCommand({
-			id: "toggle-focus-mode",
+			id: "focus-mode",
 			name: "Focus mode",
 			callback: () => this.controller.toggle(),
 		});
