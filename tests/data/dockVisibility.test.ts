@@ -58,3 +58,10 @@ test("hide resets everything", () => {
 	const { state } = run(["pointerEnter", "focusIn", "hide"]);
 	assert.deepEqual(state, INITIAL_DOCK_STATE);
 });
+
+test("an open menu holds the dock open, and closing it restarts the countdown", () => {
+	const open = run(["pointerEnter", "menuOpen", "pointerLeave", "timerElapsed"]);
+	assert.equal(open.state.visible, true);
+	assert.equal(open.timers[2], "keep");
+	assert.equal(run(["menuOpen", "menuClose"]).timers[1], "start");
+});

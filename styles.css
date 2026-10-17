@@ -75,21 +75,25 @@ body {
 .scribe-focus-theme-paper {
 	--scribe-focus-bg: #fbf8f1;
 	--scribe-focus-fg: #2b2b2b;
+	--scribe-focus-accent: var(--scribe-accent);
 }
 
 .scribe-focus-theme-sepia {
 	--scribe-focus-bg: #f4ecd8;
 	--scribe-focus-fg: #5b4636;
+	--scribe-focus-accent: var(--scribe-accent);
 }
 
 .scribe-focus-theme-dark {
 	--scribe-focus-bg: #1e1e1e;
 	--scribe-focus-fg: #d4d4d4;
+	--scribe-focus-accent: var(--scribe-accent-soft);
 }
 
 .scribe-focus-theme-night {
 	--scribe-focus-bg: #14161a;
 	--scribe-focus-fg: #9aa0a6;
+	--scribe-focus-accent: var(--scribe-accent-soft);
 }
 
 /* ---- Focus view: applying the appearance to the note ----
@@ -133,16 +137,29 @@ body {
 	z-index: var(--layer-popover);
 }
 
+/* The dock takes its colors from the active focus theme, so it reads as part
+   of the page. Outside focus mode no theme class is on <body> and the
+   fallbacks are Obsidian's own colors; the dock only exists in focus mode. */
 .scribe-focus-dock {
+	--dock-surface: color-mix(in srgb, var(--scribe-focus-bg, var(--background-secondary)) 88%, #fff);
+	--dock-text: var(--scribe-focus-fg, var(--text-normal));
+	--dock-muted: color-mix(in srgb, var(--dock-text) 62%, transparent);
+	--dock-border: color-mix(in srgb, var(--dock-text) 14%, transparent);
+	--dock-hover: color-mix(in srgb, var(--dock-text) 9%, transparent);
+	--dock-accent: var(--scribe-focus-accent, var(--scribe-accent));
+	--dock-selected: color-mix(in srgb, var(--dock-accent) 16%, transparent);
+
 	position: fixed;
 	bottom: var(--size-4-4);
 	left: 50%;
 	display: flex;
 	align-items: center;
-	gap: var(--size-4-3);
+	gap: var(--size-4-2);
+	width: min(64rem, calc(100vw - var(--size-4-8)));
 	padding: var(--size-4-2) var(--size-4-3);
-	background-color: var(--background-secondary);
-	border: 1px solid var(--background-modifier-border);
+	background-color: var(--dock-surface);
+	color: var(--dock-text);
+	border: 1px solid var(--dock-border);
 	border-radius: var(--radius-xl);
 	box-shadow: var(--shadow-l);
 	z-index: var(--layer-popover);
@@ -168,41 +185,103 @@ body {
 	}
 }
 
+.scribe-focus-dock-divider {
+	flex: none;
+	width: 1px;
+	height: var(--size-4-5);
+	background-color: var(--dock-border);
+}
+
 .scribe-focus-dock-group {
 	display: flex;
 	align-items: center;
-	gap: var(--size-4-1);
+	gap: var(--size-2-1);
 }
 
-.scribe-focus-dock-size {
-	min-width: var(--size-4-6);
-	text-align: center;
-	color: var(--text-muted);
-	font-variant-numeric: tabular-nums;
-}
+/* ---- Dock: buttons and triggers ---- */
 
-.scribe-focus-dock-button {
-	display: inline-flex;
+.scribe-focus-dock button.scribe-focus-dock-trigger,
+.scribe-focus-dock button.scribe-focus-dock-size,
+.scribe-focus-dock button.scribe-focus-dock-toggle,
+.scribe-focus-dock button.scribe-focus-dock-item {
+	display: flex;
 	align-items: center;
-	justify-content: center;
-	min-width: var(--size-4-8);
+	background: transparent;
+	border: 0;
+	border-radius: var(--radius-m);
+	box-shadow: none;
+	color: var(--dock-text);
+	cursor: pointer;
+	font-size: var(--font-ui-medium);
+}
+
+.scribe-focus-dock button.scribe-focus-dock-trigger {
+	gap: var(--size-4-2);
+	width: 100%;
 	height: var(--size-4-8);
 	padding: 0 var(--size-4-2);
-	background: transparent;
-	box-shadow: none;
-	color: var(--text-normal);
-
-	/* A small lift on hover, like the macOS Dock. */
-	transition: transform 0.12s ease;
 }
 
-.scribe-focus-dock-button:hover {
-	transform: translateY(calc(-1 * var(--size-2-2)));
-	background-color: var(--background-modifier-hover);
+.scribe-focus-dock button.scribe-focus-dock-size {
+	justify-content: center;
+	height: var(--size-4-8);
+	min-width: var(--size-4-8);
+	padding: 0 var(--size-4-2);
+	font-size: var(--font-ui-medium);
 }
 
-.scribe-focus-dock-button.is-selected {
-	box-shadow: 0 0 0 2px var(--scribe-accent);
+.scribe-focus-dock button.scribe-focus-dock-size:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.scribe-focus-dock-toggle {
+	flex: none;
+	gap: var(--size-4-2);
+	height: var(--size-4-8);
+	padding: 0 var(--size-4-3);
+}
+
+.scribe-focus-dock-toggle-state {
+	color: var(--dock-muted);
+}
+
+.scribe-focus-dock button.scribe-focus-dock-toggle.is-on {
+	background-color: var(--dock-selected);
+	color: var(--dock-accent);
+}
+
+.scribe-focus-dock-toggle.is-on .scribe-focus-dock-toggle-state {
+	color: inherit;
+}
+
+.scribe-focus-dock-size sup {
+	margin-left: 1px;
+	font-size: var(--font-ui-smaller);
+}
+
+.scribe-focus-dock-value {
+	flex: 1;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.scribe-focus-dock-chevron {
+	display: flex;
+	color: var(--dock-muted);
+}
+
+.scribe-focus-dock-chevron .svg-icon {
+	width: var(--size-4-3);
+	height: var(--size-4-3);
+}
+
+.scribe-focus-dock-lead {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	min-width: var(--size-4-6);
 }
 
 .scribe-focus-dock-font {
@@ -210,11 +289,85 @@ body {
 }
 
 .scribe-focus-dock-swatch {
-	min-width: var(--size-4-6);
-	width: var(--size-4-6);
-	height: var(--size-4-6);
-	padding: 0;
+	width: var(--size-4-5);
+	min-width: var(--size-4-5);
+	height: var(--size-4-5);
 	border-radius: 50%;
 	background-color: var(--scribe-focus-bg);
-	border: 2px solid var(--scribe-focus-fg);
+	border: 1px solid var(--dock-border);
+}
+
+/* ---- Dock: dropdown menus ---- */
+
+.scribe-focus-dock-menu {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+}
+
+.scribe-focus-dock-popover {
+	position: absolute;
+	z-index: 1;
+	bottom: calc(100% + var(--size-4-4));
+	left: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-2-1);
+	min-width: 20rem;
+	padding: var(--size-4-2);
+	background-color: var(--dock-surface);
+	border: 1px solid var(--dock-border);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-l);
+}
+
+.scribe-focus-dock-popover-heading {
+	padding: var(--size-4-1) var(--size-4-2) var(--size-4-2);
+	color: var(--dock-muted);
+	font-size: var(--font-ui-small);
+}
+
+.scribe-focus-dock button.scribe-focus-dock-item {
+	gap: var(--size-4-3);
+	width: 100%;
+	height: auto;
+	padding: var(--size-4-2);
+	text-align: left;
+}
+
+.scribe-focus-dock button.scribe-focus-dock-trigger:hover,
+.scribe-focus-dock button.scribe-focus-dock-trigger[aria-expanded="true"],
+.scribe-focus-dock button.scribe-focus-dock-size:hover:not(:disabled),
+.scribe-focus-dock button.scribe-focus-dock-toggle:hover,
+.scribe-focus-dock button.scribe-focus-dock-item:hover,
+.scribe-focus-dock button.scribe-focus-dock-item:focus-visible {
+	background-color: var(--dock-hover);
+}
+
+.scribe-focus-dock button.scribe-focus-dock-item.is-selected {
+	background-color: var(--dock-selected);
+}
+
+.scribe-focus-dock-item-text {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+}
+
+.scribe-focus-dock-item-name {
+	font-size: var(--font-ui-medium);
+}
+
+.scribe-focus-dock-item-desc {
+	color: var(--dock-muted);
+	font-size: var(--font-ui-small);
+}
+
+.scribe-focus-dock-check {
+	display: none;
+	color: var(--dock-accent);
+}
+
+.scribe-focus-dock-item.is-selected .scribe-focus-dock-check {
+	display: flex;
 }

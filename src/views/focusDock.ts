@@ -3,7 +3,21 @@
 
 import { Component, setIcon } from "obsidian";
 import { DOCK_HIDE_DELAY_MS, dockReduce, DockEvent, DockState, INITIAL_DOCK_STATE } from "../data/dockVisibility";
-import { FocusAppearance, FONTS, FontId, THEMES, ThemeId } from "../data/focusAppearance";
+import { FocusAppearance, FONT_SIZE, FONTS, FontId, THEMES, ThemeId } from "../data/focusAppearance";
+import { DockMenu, DockMenuHandle } from "./dockMenu";
+
+/**
+ * Placeholder options for the dock's focus-mode menu: the choice is shown and
+ * remembered only while the dock exists, and changes nothing yet. Not the
+ * `FOCUS_MODES` table, which describes what hides, not how text is dimmed.
+ */
+const DIM_MODES = [
+	{ id: "minimal", name: "Minimal", description: "Only the page, nothing dimmed", icon: "file-text" },
+	{ id: "line", name: "Line focus", description: "Dim all but the current line", icon: "align-justify" },
+	{ id: "paragraph", name: "Paragraph focus", description: "Dim all but the current paragraph", icon: "pilcrow" },
+	{ id: "typewriter", name: "Typewriter", description: "Keep the current line centred", icon: "keyboard" },
+] as const;
+type DimModeId = (typeof DIM_MODES)[number]["id"];
 
 export interface FocusDockHandlers {
 	changeFontSize(direction: 1 | -1): void;
@@ -23,9 +37,14 @@ export class FocusDock extends Component {
 	private timer: number | null = null;
 	private zoneEl: HTMLElement | null = null;
 	private dockEl: HTMLElement | null = null;
-	private sizeEl: HTMLElement | null = null;
-	private readonly fontButtons = new Map<FontId, HTMLButtonElement>();
-	private readonly themeButtons = new Map<ThemeId, HTMLButtonElement>();
+	private smallerEl: HTMLButtonElement | null = null;
+	private largerEl: HTMLButtonElement | null = null;
+	private modeMenu: DockMenu<DimModeId> | null = null;
+	private soundsEl: HTMLButtonElement | null = null;
+	private dimMode: DimModeId = "paragraph";
+	private keySounds = false;
+	private fontMenu: DockMenu<FontId> | null = null;
+	private themeMenu: DockMenu<ThemeId> | null = null;
 
 	constructor(
 		private readonly handlers: FocusDockHandlers,
@@ -43,9 +62,15 @@ export class FocusDock extends Component {
 		this.zoneEl = zone;
 		this.dockEl = dock;
 
+		this.buildModeMenu(dock);
+		dock.createDiv({ cls: "scribe-focus-dock-divider" });
+		this.buildFontMenu(dock);
+		dock.createDiv({ cls: "scribe-focus-dock-divider" });
 		this.buildSizeGroup(dock);
-		this.buildFontGroup(dock);
-		this.buildThemeGroup(dock);
+		dock.createDiv({ cls: "scribe-focus-dock-divider" });
+		this.buildThemeMenu(dock);
+		dock.createDiv({ cls: "scribe-focus-dock-divider" });
+		this.buildSoundsToggle(dock);
 
 		this.registerDomEvent(zone, "mouseenter", () => this.dispatch("pointerEnter"));
 		this.registerDomEvent(zone, "mouseleave", () => this.dispatch("pointerLeave"));
@@ -57,6 +82,11 @@ export class FocusDock extends Component {
 			if ((evt.target as HTMLElement).matches(":focus-visible")) this.dispatch("focusIn");
 		});
 		this.registerDomEvent(dock, "focusout", () => this.dispatch("focusOut"));
+		// A click anywhere else closes an open menu.
+		this.registerDomEvent(activeDocument, "pointerdown", (evt) => {
+			const target = evt.target as Node | null;
+			for (const menu of this.menus()) if (!menu.contains(target)) menu.close();
+		});
 
 		this.update(this.appearance);
 	}
@@ -65,9 +95,11 @@ export class FocusDock extends Component {
 		this.clearTimer();
 		this.zoneEl?.remove();
 		this.dockEl?.remove();
-		this.zoneEl = this.dockEl = this.sizeEl = null;
-		this.fontButtons.clear();
-		this.themeButtons.clear();
+		this.modeMenu?.unload();
+		this.fontMenu?.unload();
+		this.themeMenu?.unload();
+		this.zoneEl = this.dockEl = this.smallerEl = this.largerEl = null;
+		this.modeMenu = this.fontMenu = this.themeMenu = this.soundsEl = null;
 	}
 
 	/** Slides the dock up and starts the hide countdown. */
@@ -83,59 +115,126 @@ export class FocusDock extends Component {
 	/** Reflects a new appearance in the dock's own controls. */
 	update(appearance: FocusAppearance): void {
 		this.appearance = appearance;
-		this.sizeEl?.setText(String(appearance.fontSize));
-		for (const [id, el] of this.fontButtons) this.markSelected(el, id === appearance.fontFamily);
-		for (const [id, el] of this.themeButtons) this.markSelected(el, id === appearance.theme);
+		if (this.smallerEl) this.smallerEl.disabled = appearance.fontSize <= FONT_SIZE.min;
+		if (this.largerEl) this.largerEl.disabled = appearance.fontSize >= FONT_SIZE.max;
+		this.fontMenu?.setSelected(appearance.fontFamily);
+		this.themeMenu?.setSelected(appearance.theme);
 	}
 
 	private buildSizeGroup(dock: HTMLElement): void {
 		const group = dock.createDiv({ cls: "scribe-focus-dock-group" });
-		this.button(group, "minus", "Smaller text", () => this.handlers.changeFontSize(-1));
-		this.sizeEl = group.createSpan({ cls: "scribe-focus-dock-size" });
-		this.button(group, "plus", "Larger text", () => this.handlers.changeFontSize(1));
+		this.smallerEl = this.sizeButton(group, "\u2212", "Smaller text", -1);
+		this.largerEl = this.sizeButton(group, "+", "Larger text", 1);
 	}
 
-	private buildFontGroup(dock: HTMLElement): void {
-		const group = dock.createDiv({ cls: "scribe-focus-dock-group" });
-		for (const font of FONTS) {
-			const el = group.createEl("button", {
-				cls: `scribe-focus-dock-button scribe-focus-dock-font scribe-focus-font-${font.id}`,
-				text: "Aa",
-			});
-			el.setAttr("aria-label", font.name);
-			el.setAttr("title", font.name);
-			this.registerDomEvent(el, "click", () => this.handlers.setFont(font.id));
-			this.fontButtons.set(font.id, el);
-		}
-	}
-
-	private buildThemeGroup(dock: HTMLElement): void {
-		const group = dock.createDiv({ cls: "scribe-focus-dock-group" });
-		for (const theme of THEMES) {
-			// The swatch carries the theme's own class so it picks up that theme's
-			// colors from the stylesheet, whichever theme is active on <body>.
-			const el = group.createEl("button", {
-				cls: `scribe-focus-dock-button scribe-focus-dock-swatch scribe-focus-theme-${theme.id}`,
-			});
-			el.setAttr("aria-label", `${theme.name} theme`);
-			el.setAttr("title", `${theme.name} theme`);
-			this.registerDomEvent(el, "click", () => this.handlers.setTheme(theme.id));
-			this.themeButtons.set(theme.id, el);
-		}
-	}
-
-	private button(parent: HTMLElement, icon: string, label: string, onClick: () => void): HTMLButtonElement {
-		const el = parent.createEl("button", { cls: "scribe-focus-dock-button" });
+	/** An "A" with a small sign beside it, so the pair reads as a text-size control. */
+	private sizeButton(parent: HTMLElement, sign: string, label: string, direction: 1 | -1): HTMLButtonElement {
+		const el = parent.createEl("button", { cls: "scribe-focus-dock-size" });
 		el.setAttr("aria-label", label);
 		el.setAttr("title", label);
-		setIcon(el, icon);
-		this.registerDomEvent(el, "click", onClick);
+		el.createSpan({ text: "A" });
+		el.createEl("sup", { text: sign });
+		this.registerDomEvent(el, "click", () => this.handlers.changeFontSize(direction));
 		return el;
 	}
 
-	private markSelected(el: HTMLElement, selected: boolean): void {
-		el.toggleClass("is-selected", selected);
-		el.setAttr("aria-pressed", String(selected));
+	private buildModeMenu(dock: HTMLElement): void {
+		this.modeMenu = this.addChild(
+			new DockMenu<DimModeId>(
+				dock,
+				"Focus mode",
+				DIM_MODES.map((mode) => ({
+					id: mode.id,
+					name: mode.name,
+					description: mode.description,
+					previewCls: "",
+					renderPreview: (el) => setIcon(el, mode.icon),
+				})),
+				this.dimMode,
+				(id) => {
+					this.dimMode = id;
+				},
+				(open) => this.onMenuOpenChange(open),
+				(el, id) => setIcon(el, DIM_MODES.find((m) => m.id === id)?.icon ?? "pilcrow"),
+				"scribe-focus-dock-trigger-mode",
+			),
+		);
+	}
+
+	private buildSoundsToggle(dock: HTMLElement): void {
+		const el = dock.createEl("button", { cls: "scribe-focus-dock-toggle" });
+		this.soundsEl = el;
+		this.registerDomEvent(el, "click", () => {
+			this.keySounds = !this.keySounds;
+			this.renderSounds();
+		});
+		this.renderSounds();
+	}
+
+	private renderSounds(): void {
+		const el = this.soundsEl;
+		if (!el) return;
+		el.empty();
+		el.toggleClass("is-on", this.keySounds);
+		el.setAttr("aria-pressed", String(this.keySounds));
+		setIcon(el.createSpan({ cls: "scribe-focus-dock-lead" }), this.keySounds ? "volume-2" : "volume-x");
+		el.createSpan({ text: "Key sounds" });
+		el.createSpan({ cls: "scribe-focus-dock-toggle-state", text: this.keySounds ? "On" : "Off" });
+	}
+
+	private buildFontMenu(dock: HTMLElement): void {
+		this.fontMenu = this.addChild(
+			new DockMenu<FontId>(
+				dock,
+				"Font",
+				FONTS.map((font) => ({
+					id: font.id,
+					name: font.name,
+					description: font.description,
+					previewCls: `scribe-focus-dock-font scribe-focus-font-${font.id}`,
+					renderPreview: (el) => el.setText("Aa"),
+				})),
+				this.appearance.fontFamily,
+				(id) => this.handlers.setFont(id),
+				(open) => this.onMenuOpenChange(open),
+				// No font class here: the trigger follows the font active on <body>.
+				(el) => el.createSpan({ cls: "scribe-focus-dock-font", text: "Aa" }),
+				"scribe-focus-dock-trigger-font",
+			),
+		);
+	}
+
+	private buildThemeMenu(dock: HTMLElement): void {
+		this.themeMenu = this.addChild(
+			new DockMenu<ThemeId>(
+				dock,
+				"Theme",
+				THEMES.map((theme) => ({
+					id: theme.id,
+					name: theme.name,
+					description: theme.description,
+					// The swatch carries the theme's own class so it picks up that theme's
+					// colors from the stylesheet, whichever theme is active on <body>.
+					previewCls: `scribe-focus-theme-${theme.id}`,
+					renderPreview: (el) => el.addClass("scribe-focus-dock-swatch"),
+				})),
+				this.appearance.theme,
+				(id) => this.handlers.setTheme(id),
+				(open) => this.onMenuOpenChange(open),
+				(el) => el.createSpan({ cls: "scribe-focus-dock-swatch" }),
+				"scribe-focus-dock-trigger-theme",
+			),
+		);
+	}
+
+	private menus(): DockMenuHandle[] {
+		return [this.modeMenu, this.fontMenu, this.themeMenu].filter((m): m is NonNullable<typeof m> => m !== null);
+	}
+
+	/** Only one menu is open at a time, and an open one keeps the dock from hiding. */
+	private onMenuOpenChange(open: boolean): void {
+		if (open) for (const menu of this.menus()) if (menu.isOpen()) menu.close();
+		this.dispatch(open ? "menuOpen" : "menuClose");
 	}
 
 	private dispatch(event: DockEvent): void {
@@ -146,6 +245,7 @@ export class FocusDock extends Component {
 			this.timer = window.setTimeout(() => this.dispatch("timerElapsed"), DOCK_HIDE_DELAY_MS);
 		}
 		this.dockEl?.toggleClass("is-visible", this.state.visible);
+		if (!this.state.visible) for (const menu of this.menus()) menu.close();
 	}
 
 	private clearTimer(): void {

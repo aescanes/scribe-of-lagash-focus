@@ -5,6 +5,12 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- Redesigned the appearance dock: a wider bar that follows the active focus
+  theme, with font and theme dropdowns (name, description and a check on the
+  current choice) and flat A− / A+ text-size buttons. An open dropdown keeps
+  the dock from hiding; `Esc` closes it without leaving focus mode.
+
 ## [0.1.0](https://github.com/aescanes/scribe-of-lagash-focus/releases/tag/0.1.0) - 2026-10-17
 
 ### Added

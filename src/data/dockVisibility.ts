@@ -14,9 +14,11 @@ export interface DockState {
 	pointerInside: boolean;
 	/** Keyboard focus is inside the dock. */
 	focusInside: boolean;
+	/** A dropdown menu is open; the dock must not slide away from under it. */
+	menuOpen: boolean;
 }
 
-export type DockEvent = "show" | "pointerEnter" | "pointerLeave" | "focusIn" | "focusOut" | "timerElapsed" | "hide";
+export type DockEvent = "show" | "pointerEnter" | "pointerLeave" | "focusIn" | "focusOut" | "menuOpen" | "menuClose" | "timerElapsed" | "hide";
 
 /**
  * What the view must do with its single hide timer: `start` clears any
@@ -30,10 +32,15 @@ export interface DockStep {
 	timer: DockTimerAction;
 }
 
-export const INITIAL_DOCK_STATE: DockState = { visible: false, pointerInside: false, focusInside: false };
+export const INITIAL_DOCK_STATE: DockState = {
+	visible: false,
+	pointerInside: false,
+	focusInside: false,
+	menuOpen: false,
+};
 
 function held(state: DockState): boolean {
-	return state.pointerInside || state.focusInside;
+	return state.pointerInside || state.focusInside || state.menuOpen;
 }
 
 /** The state after `event`, plus what to do with the hide timer. */
@@ -47,6 +54,12 @@ export function dockReduce(state: DockState, event: DockEvent): DockStep {
 			return { state: { ...state, visible: true, pointerInside: true }, timer: "cancel" };
 		case "focusIn":
 			return { state: { ...state, visible: true, focusInside: true }, timer: "cancel" };
+		case "menuOpen":
+			return { state: { ...state, visible: true, menuOpen: true }, timer: "cancel" };
+		case "menuClose": {
+			const next = { ...state, menuOpen: false };
+			return { state: next, timer: next.visible && !held(next) ? "start" : "keep" };
+		}
 		case "pointerLeave": {
 			const next = { ...state, pointerInside: false };
 			return { state: next, timer: next.visible && !held(next) ? "start" : "keep" };

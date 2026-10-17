@@ -11,27 +11,30 @@ export type ThemeId = "paper" | "sepia" | "dark" | "night";
 export interface FontOption {
 	id: FontId;
 	name: string;
+	/** The short line shown under the name in the dock's menu. */
+	description: string;
 }
 
 export interface ThemeOption {
 	id: ThemeId;
 	name: string;
+	description: string;
 }
 
 /** In display order. Every font is a system font, so nothing is bundled. */
 export const FONTS: readonly FontOption[] = [
-	{ id: "georgia", name: "Georgia" },
-	{ id: "times-new-roman", name: "Times New Roman" },
-	{ id: "courier-new", name: "Courier New" },
-	{ id: "helvetica", name: "Helvetica" },
+	{ id: "georgia", name: "Georgia", description: "Serif · classic book text" },
+	{ id: "times-new-roman", name: "Times New Roman", description: "Serif · traditional print" },
+	{ id: "courier-new", name: "Courier New", description: "Mono · a typescript feel" },
+	{ id: "helvetica", name: "Helvetica", description: "Sans · clean and neutral" },
 ];
 
 /** In display order. */
 export const THEMES: readonly ThemeOption[] = [
-	{ id: "paper", name: "Paper" },
-	{ id: "sepia", name: "Sepia" },
-	{ id: "dark", name: "Dark" },
-	{ id: "night", name: "Night" },
+	{ id: "paper", name: "Paper", description: "Warm white" },
+	{ id: "sepia", name: "Sepia", description: "Dried clay" },
+	{ id: "dark", name: "Dark", description: "Neutral dark" },
+	{ id: "night", name: "Night", description: "Dark, low glare" },
 ];
 
 /** Font size in pixels. */
