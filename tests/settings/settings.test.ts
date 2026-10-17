@@ -19,5 +19,12 @@ test("valid stored values are kept", () => {
 		fontSize: 24,
 		fontFamily: "courier-new",
 		theme: "night",
+		hotkeyPrompted: false,
 	});
+});
+
+test("hotkeyPrompted is kept only when it is exactly true", () => {
+	assert.equal(normalizeSettings({ hotkeyPrompted: true }).hotkeyPrompted, true);
+	assert.equal(normalizeSettings({ hotkeyPrompted: "yes" }).hotkeyPrompted, false);
+	assert.equal(DEFAULT_SETTINGS.hotkeyPrompted, false);
 });

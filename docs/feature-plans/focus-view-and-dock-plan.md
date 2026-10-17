@@ -6,7 +6,7 @@ now (see "Relationship to the mode model").
 
 ## Goal
 
-One action — the ribbon icon, the "Toggle focus mode" command, or a key
+One action — the ribbon icon, the "Focus mode" command, or a key
 combination the writer binds to that command — turns Obsidian into a single
 note on a clean page. A macOS-Dock-style bar at the bottom center, hidden most
 of the time, lets the writer change the font size, font, and theme, and the
@@ -123,6 +123,26 @@ as the distraction-free mode — the hide characteristics — with the appearanc
 dock added. Typewriter, spotlight, and deep work come later and would show up
 as more dock controls. The persisted `mode` field is dropped for now, since
 nothing chooses a mode yet, and returns when something does.
+
+## Hotkey prompt
+
+Obsidian's guidelines forbid a plugin from shipping a default hotkey, and there
+is no public API to assign one or to open the Hotkeys screen. So the first time
+the plugin is enabled (and after the workspace is ready) it shows a dialog
+explaining focus mode with "Maybe later" and "Set hotkey". "Set hotkey" opens
+Obsidian's own Hotkeys screen filtered to "Focus mode", which gives the
+writer Obsidian's key capture and conflict warnings. The "shown" flag is saved
+before the dialog opens, so dismissing it never brings it back by itself; the
+"Set focus mode hotkey" command reopens it. Disabling and re-enabling the
+plugin doesn't re-prompt, because `data.json` is kept.
+
+Opening that screen uses the undocumented `app.setting` (the same approach many
+community plugins use). It is feature-detected and falls back to a `Notice`
+with written instructions, but it can break or be questioned in review.
+
+Not verified in Obsidian yet: the prompt on first enable (and from a fresh
+vault with no `data.json`), that the Hotkeys screen opens already filtered, and
+the fallback `Notice` path.
 
 ## Build order
 

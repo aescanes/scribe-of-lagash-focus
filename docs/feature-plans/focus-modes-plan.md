@@ -27,7 +27,7 @@ to know how a characteristic is realized.
 
 Focus mode applies to the whole vault; there is no story folder, exclusion list
 or Obsidian settings tab. The entry points are the left ribbon icon and the
-"Toggle focus mode" command (bind a key in Hotkeys — plugin guidelines forbid a
+"Focus mode" command (bind a key in Hotkeys — plugin guidelines forbid a
 default one). The plugin's options live in the focus dock; `data.json` holds the writer's
 font size, font and theme. The persisted `mode` was dropped, since nothing
 chooses a mode yet.

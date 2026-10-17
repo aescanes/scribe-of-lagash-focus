@@ -27,8 +27,12 @@ Rules:
 - **No story folder, exclusions or other scope.** Focus mode applies to the
   whole vault.
 - **Entry points:** the left-ribbon icon and a command. The command has no
-  default hotkey (Obsidian guidelines); the writer binds a key combination in
-  Hotkeys. `Esc` leaves focus mode; `Shift` + `Up arrow` shows the dock and
+  default hotkey (Obsidian guidelines). Instead, the first time the plugin is
+  enabled a prompt (`HotkeyPromptModal`) sends the writer to Obsidian's Hotkeys
+  screen; it is shown once (`hotkeyPrompted` in `data.json`) and reopened by the
+  "Set focus mode hotkey" command. That screen is opened through the
+  undocumented `app.setting`, feature-detected in `openHotkeySettings`, with a
+  `Notice` fallback — it is not public API, so recheck it after Obsidian updates. `Esc` leaves focus mode; `Shift` + `Up arrow` shows the dock and
   `Shift` + `Down arrow` hides it.
 - **Focus mode never survives a restart**, and the appearance (font size, font,
   theme) applies only while it is on.
@@ -52,7 +56,7 @@ tooling and the `(SL) ` prefix for generated files.
 
 - Entry point: [`src/main.ts`](src/main.ts) → `ScribeFocusModePlugin` — onload
   wiring only: loads settings, creates the `FocusController`, adds the
-  left-ribbon icon and the "Toggle focus mode" command, and merges and saves
+  left-ribbon icon and the "Focus mode" command, and merges and saves
   appearance changes from the dock.
 - [`src/data/`](src/data/) — **pure, no Obsidian imports**, unit-tested:
   - `focusMode` — the `FOCUS_MODES` table, `FocusCharacteristics`, and
@@ -68,8 +72,10 @@ tooling and the `(SL) ` prefix for generated files.
 - [`src/views/focusDock.ts`](src/views/focusDock.ts) — the bottom-center dock
   and its hot zone; turns DOM events into `dockReduce` events and runs the one
   hide timer.
+- [`src/views/hotkeyPrompt.ts`](src/views/hotkeyPrompt.ts) — the first-run
+  hotkey prompt and the helper that opens Obsidian's Hotkeys screen.
 - [`src/settings/settings.ts`](src/settings/settings.ts) — persisted appearance
-  (`fontSize`, `fontFamily`, `theme`) and `normalizeSettings`.
+  (`fontSize`, `fontFamily`, `theme`), `hotkeyPrompted`, and `normalizeSettings`.
 - [`styles.css`](styles.css) — prefer Obsidian's own CSS variables. Plugin
   classes are prefixed `.scribe-`. The magenta brand accent is defined once as
   `--scribe-accent` / `--scribe-accent-soft`; never introduce another raw hex

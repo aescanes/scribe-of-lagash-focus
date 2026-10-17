@@ -4,12 +4,19 @@
 import { DEFAULT_APPEARANCE, FocusAppearance, normalizeAppearance } from "../data/focusAppearance";
 
 /**
- * Persisted state. There is no settings tab: the options live in the focus
- * dock, which writes the writer's last font size, font and theme here.
+ * Persisted state. There is no settings tab: the appearance options live in
+ * the focus dock, which writes the writer's last font size, font and theme here.
  */
-export type ScribeFocusModeSettings = FocusAppearance;
+export interface ScribeFocusModeSettings extends FocusAppearance {
+	/**
+	 * Whether the first-run hotkey prompt has been shown. Set as soon as it is
+	 * shown, even if dismissed, so it never nags; the writer can reopen it with
+	 * the "Set focus mode hotkey" command.
+	 */
+	hotkeyPrompted: boolean;
+}
 
-export const DEFAULT_SETTINGS: ScribeFocusModeSettings = { ...DEFAULT_APPEARANCE };
+export const DEFAULT_SETTINGS: ScribeFocusModeSettings = { ...DEFAULT_APPEARANCE, hotkeyPrompted: false };
 
 /**
  * Coerces persisted data — which may be absent, partial, or from an older
@@ -19,5 +26,5 @@ export const DEFAULT_SETTINGS: ScribeFocusModeSettings = { ...DEFAULT_APPEARANCE
  */
 export function normalizeSettings(stored: unknown): ScribeFocusModeSettings {
 	const record = typeof stored === "object" && stored !== null ? (stored as Record<string, unknown>) : null;
-	return normalizeAppearance(record);
+	return { ...normalizeAppearance(record), hotkeyPrompted: record?.hotkeyPrompted === true };
 }

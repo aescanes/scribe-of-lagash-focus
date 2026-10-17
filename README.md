@@ -55,12 +55,16 @@ scope and applies to the whole vault.
 
 ### Focus view
 
-Click the full-screen icon in the left ribbon, or run the "Toggle focus mode"
+Click the full-screen icon in the left ribbon, or run the "Focus mode"
 command, to hide everything except the current note: both sidebars, the ribbon,
 the tab strip and view header, the status bar, the title bar and any other
-panes. Leave with `Esc` or by running the same command again. Bind the
-command to a key combination in Obsidian's Hotkeys; the plugin doesn't ship a
-default one. Focus mode applies to the whole vault, and is always off after
+panes. Leave with `Esc` or by running the same command again.
+
+**Hotkey.** The first time you enable the plugin it asks you to choose a key
+combination for "Focus mode" and opens Obsidian's Hotkeys screen for
+you. The plugin never picks a key itself (Obsidian's guidelines forbid default
+hotkeys). You can change the key at any time in Hotkeys, or reopen the prompt
+with the "Set focus mode hotkey" command. Focus mode applies to the whole vault, and is always off after
 Obsidian restarts.
 
 On desktop, focus mode also takes the window full screen and leaves it again
