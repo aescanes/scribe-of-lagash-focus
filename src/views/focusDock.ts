@@ -3,23 +3,20 @@
 
 import { Component, setIcon } from "obsidian";
 import { DOCK_HIDE_DELAY_MS, dockReduce, DockEvent, DockState, INITIAL_DOCK_STATE } from "../data/dockVisibility";
+import { FocusModeId, FOCUS_MODES } from "../data/focusMode";
 import { FocusAppearance, FONT_SIZE, FONTS, FontId, THEMES, ThemeId } from "../data/focusAppearance";
 import { DockMenu, DockMenuHandle } from "./dockMenu";
 
-/**
- * Placeholder options for the dock's focus-mode menu: the choice is shown and
- * remembered only while the dock exists, and changes nothing yet. Not the
- * `FOCUS_MODES` table, which describes what hides, not how text is dimmed.
- */
-const DIM_MODES = [
-	{ id: "minimal", name: "Minimal", description: "Only the page, nothing dimmed", icon: "file-text" },
-	{ id: "line", name: "Line focus", description: "Dim all but the current line", icon: "align-justify" },
-	{ id: "paragraph", name: "Paragraph focus", description: "Dim all but the current paragraph", icon: "pilcrow" },
-	{ id: "typewriter", name: "Typewriter", description: "Keep the current line centred", icon: "keyboard" },
-] as const;
-type DimModeId = (typeof DIM_MODES)[number]["id"];
+/** Lucide icon per focus mode, for the menu and its trigger. */
+const MODE_ICONS: Record<FocusModeId, string> = {
+	"distraction-free": "file-text",
+	typewriter: "keyboard",
+	spotlight: "pilcrow",
+	"deep-work": "target",
+};
 
 export interface FocusDockHandlers {
+	setMode(id: FocusModeId): void;
 	changeFontSize(direction: 1 | -1): void;
 	setFont(id: FontId): void;
 	setTheme(id: ThemeId): void;
@@ -39,9 +36,8 @@ export class FocusDock extends Component {
 	private dockEl: HTMLElement | null = null;
 	private smallerEl: HTMLButtonElement | null = null;
 	private largerEl: HTMLButtonElement | null = null;
-	private modeMenu: DockMenu<DimModeId> | null = null;
+	private modeMenu: DockMenu<FocusModeId> | null = null;
 	private soundsEl: HTMLButtonElement | null = null;
-	private dimMode: DimModeId = "paragraph";
 	private keySounds = false;
 	private fontMenu: DockMenu<FontId> | null = null;
 	private themeMenu: DockMenu<ThemeId> | null = null;
@@ -49,6 +45,7 @@ export class FocusDock extends Component {
 	constructor(
 		private readonly handlers: FocusDockHandlers,
 		private appearance: FocusAppearance,
+		private mode: FocusModeId,
 	) {
 		super();
 	}
@@ -88,7 +85,7 @@ export class FocusDock extends Component {
 			for (const menu of this.menus()) if (!menu.contains(target)) menu.close();
 		});
 
-		this.update(this.appearance);
+		this.update(this.appearance, this.mode);
 	}
 
 	onunload(): void {
@@ -113,8 +110,10 @@ export class FocusDock extends Component {
 	}
 
 	/** Reflects a new appearance in the dock's own controls. */
-	update(appearance: FocusAppearance): void {
+	update(appearance: FocusAppearance, mode: FocusModeId): void {
 		this.appearance = appearance;
+		this.mode = mode;
+		this.modeMenu?.setSelected(mode);
 		if (this.smallerEl) this.smallerEl.disabled = appearance.fontSize <= FONT_SIZE.min;
 		if (this.largerEl) this.largerEl.disabled = appearance.fontSize >= FONT_SIZE.max;
 		this.fontMenu?.setSelected(appearance.fontFamily);
@@ -140,22 +139,20 @@ export class FocusDock extends Component {
 
 	private buildModeMenu(dock: HTMLElement): void {
 		this.modeMenu = this.addChild(
-			new DockMenu<DimModeId>(
+			new DockMenu<FocusModeId>(
 				dock,
 				"Focus mode",
-				DIM_MODES.map((mode) => ({
+				FOCUS_MODES.map((mode) => ({
 					id: mode.id,
 					name: mode.name,
 					description: mode.description,
 					previewCls: "",
-					renderPreview: (el) => setIcon(el, mode.icon),
+					renderPreview: (el) => setIcon(el, MODE_ICONS[mode.id]),
 				})),
-				this.dimMode,
-				(id) => {
-					this.dimMode = id;
-				},
+				this.mode,
+				(id) => this.handlers.setMode(id),
 				(open) => this.onMenuOpenChange(open),
-				(el, id) => setIcon(el, DIM_MODES.find((m) => m.id === id)?.icon ?? "pilcrow"),
+				(el, id) => setIcon(el, MODE_ICONS[id]),
 				"scribe-focus-dock-trigger-mode",
 			),
 		);

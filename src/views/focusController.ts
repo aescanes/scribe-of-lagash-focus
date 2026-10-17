@@ -2,9 +2,11 @@
 // Copyright (C) 2026 aescanes
 
 import { App, Component, MarkdownView, Notice, Platform } from "obsidian";
-import { appearanceBodyClasses, FocusAppearance, FontId, stepFontSize, ThemeId } from "../data/focusAppearance";
-import { DEFAULT_FOCUS_MODE, focusBodyClasses, getFocusMode } from "../data/focusMode";
+import { appearanceBodyClasses, FontId, stepFontSize, ThemeId } from "../data/focusAppearance";
+import { FocusModeId, focusBodyClasses, getFocusMode } from "../data/focusMode";
+import { ScribeFocusModeSettings } from "../settings/settings";
 import { FocusDock } from "./focusDock";
+import { FocusEditorEngine } from "./focusEditor";
 
 /** CSS custom property that carries the font size; the one value set from code. */
 const FONT_SIZE_PROPERTY = "--scribe-focus-font-size";
@@ -36,8 +38,9 @@ export class FocusController extends Component {
 
 	constructor(
 		private readonly app: App,
-		private readonly getAppearance: () => FocusAppearance,
-		private readonly saveAppearance: (patch: Partial<FocusAppearance>) => void,
+		private readonly getSettings: () => ScribeFocusModeSettings,
+		private readonly saveSettings: (patch: Partial<ScribeFocusModeSettings>) => void,
+		private readonly editor: FocusEditorEngine,
 	) {
 		super();
 	}
@@ -72,7 +75,7 @@ export class FocusController extends Component {
 		this.enabled = enabled;
 		this.refresh();
 		if (enabled) {
-			this.dock = this.addChild(new FocusDock(this.dockHandlers(), this.getAppearance()));
+			this.dock = this.addChild(new FocusDock(this.dockHandlers(), this.getSettings(), this.getSettings().mode));
 			this.dock.show();
 			void this.enterFullscreen();
 		} else {
@@ -123,21 +126,24 @@ export class FocusController extends Component {
 	refresh(): void {
 		this.clearClasses();
 		if (this.enabled) this.applyClasses();
-		this.dock?.update(this.getAppearance());
+		const { dim, typewriterScroll } = getFocusMode(this.getSettings().mode).characteristics;
+		this.editor.set(this.enabled ? dim : "none", this.enabled && typewriterScroll);
+		this.dock?.update(this.getSettings(), this.getSettings().mode);
 	}
 
 	private dockHandlers() {
 		return {
 			changeFontSize: (direction: 1 | -1) =>
-				this.change({ fontSize: stepFontSize(this.getAppearance().fontSize, direction) }),
+				this.change({ fontSize: stepFontSize(this.getSettings().fontSize, direction) }),
+			setMode: (mode: FocusModeId) => this.change({ mode }),
 			setFont: (fontFamily: FontId) => this.change({ fontFamily }),
 			setTheme: (theme: ThemeId) => this.change({ theme }),
 		};
 	}
 
 	/** Applies a dock change to the note at once, then saves it. */
-	private change(patch: Partial<FocusAppearance>): void {
-		this.saveAppearance(patch);
+	private change(patch: Partial<ScribeFocusModeSettings>): void {
+		this.saveSettings(patch);
 		this.refresh();
 	}
 
@@ -156,10 +162,10 @@ export class FocusController extends Component {
 	}
 
 	private applyClasses(): void {
-		const appearance = this.getAppearance();
+		const appearance = this.getSettings();
 		this.body = activeDocument.body;
 		this.appliedClasses = [
-			...focusBodyClasses(getFocusMode(DEFAULT_FOCUS_MODE)),
+			...focusBodyClasses(getFocusMode(appearance.mode)),
 			...appearanceBodyClasses(appearance),
 		];
 		this.body.addClass(...this.appliedClasses);

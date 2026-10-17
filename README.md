@@ -4,12 +4,14 @@
 ![Minimum Obsidian version](https://img.shields.io/badge/obsidian-%E2%89%A51.10.0-8b6cef)
 
 An [Obsidian](https://obsidian.md) plugin that helps writers **concentrate on
-their work and remove distractions** with a distraction-free focus view. It is part
+their work and remove distractions** with a distraction-free focus view and four
+focus modes. It is part
 of the **Scribe of Lagash** series, a set of independent, focused tools for
 planning and writing stories in Obsidian.
 
-> **Status: early version.** The focus view and the appearance dock are in
-> place; more focus features land one at a time — see "Planned next".
+> **Status: early version.** The focus view, the four focus modes and the
+> appearance dock are in place; more features land one at a time — see
+> "Planned next".
 
 ## Thank you
 
@@ -70,6 +72,25 @@ Obsidian restarts.
 On desktop, focus mode also takes the window full screen and leaves it again
 when you exit; `Esc` ends both at once.
 
+### Focus modes
+
+Pick a mode from the **Focus mode** menu in the dock. Every mode hides the
+interface the same way (see above); they differ in how the text itself is
+shown. Your choice is remembered for next time.
+
+| Mode | What it does |
+| --- | --- |
+| **Distraction-free** (default) | Only the page: nothing is dimmed and the text scrolls normally. |
+| **Typewriter** | Keeps the line you are writing in a box at the middle of the screen, like paper rolling through a typewriter: the text moves past the box and everything outside it is dimmed. Inside the box only the line with the cursor is lit. The note title is hidden, and the page gets extra space above and below so the first and last lines can reach the middle too. |
+| **Spotlight** | Dims everything except the paragraph you are writing. A paragraph is the run of lines between blank lines. |
+| **Deep work** | Like Spotlight, but narrower: dims everything except the line you are writing. The text is not centered and the note title stays. A line is one row as the editor wraps it, so it ends where the text moves to the next row, even mid-sentence. |
+
+Notes:
+
+- Typewriter scrolling and dimming follow the cursor, so they apply in the
+  editor (Live Preview and Source mode). Reading view is shown undimmed.
+- Dimming only changes how the editor looks. Your note is never edited.
+
 ### Appearance dock
 
 A small bar at the bottom center of the screen, like the macOS Dock. It shows
@@ -78,18 +99,20 @@ bottom middle of the window, or press `Shift` + `Up arrow`, to bring it back;
 `Shift` + `Down arrow` hides it right away.
 It changes the note instantly and remembers your choices:
 
+- **Focus mode** — Distraction-free, Typewriter, Spotlight or Deep work (see above).
 - **Text size** — smaller and larger.
 - **Font** — Georgia, Times New Roman, Courier New or Helvetica, applied to the
   note's text and title (code keeps its own font).
 - **Theme** — Paper, Sepia, Dark or Night.
+- **Key sounds** — a preview of the on/off switch; it does not play sounds yet.
 
 The plugin has no settings tab, never edits your notes, and only changes how
 the editor looks while focus mode is on.
 
 ## Planned next
 
-- Typewriter scrolling, which keeps the line you are writing centered.
-- Paragraph and sentence dimming, so only what you are writing is lit.
+- Key sounds.
+- Dimming and typewriter scrolling in Reading view.
 - More themes and fonts.
 - Session extras that pair with Goals and Stats, such as a timer.
 

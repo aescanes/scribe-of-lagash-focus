@@ -5,6 +5,12 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Focus modes, chosen from the dock's Focus mode menu and remembered: Typewriter
+  (keeps the current line centered), Spotlight (dims all but the current
+  paragraph) and Deep work (dims all but the current line), alongside
+  the default Distraction-free. Every mode hides the interface.
+
 ### Changed
 - Redesigned the appearance dock: a wider bar that follows the active focus
   theme, with font and theme dropdowns (name, description and a check on the

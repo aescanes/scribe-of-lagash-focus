@@ -10,8 +10,9 @@ test("absent or malformed data yields the defaults", () => {
 	assert.deepEqual(normalizeSettings("nope"), DEFAULT_SETTINGS);
 });
 
-test("the dropped mode field is ignored", () => {
-	assert.deepEqual(normalizeSettings({ mode: "spotlight" }), DEFAULT_SETTINGS);
+test("a valid mode is kept and an unknown one falls back to the default", () => {
+	assert.equal(normalizeSettings({ mode: "spotlight" }).mode, "spotlight");
+	assert.equal(normalizeSettings({ mode: "nope" }).mode, DEFAULT_SETTINGS.mode);
 });
 
 test("valid stored values are kept", () => {
@@ -20,6 +21,7 @@ test("valid stored values are kept", () => {
 		fontFamily: "courier-new",
 		theme: "night",
 		hotkeyPrompted: false,
+		mode: DEFAULT_SETTINGS.mode,
 	});
 });
 

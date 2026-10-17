@@ -3,12 +3,14 @@
 
 // Pure focus-mode definitions — no Obsidian imports, unit-tested. A mode is a
 // named bundle of "characteristics" (what the editor hides, centers or dims);
-// the views layer decides how to realize each one.
+// the views layer decides how to realize each one. Every mode hides the
+// interface — the dock that switches modes only exists in the focus view — so
+// the modes differ only in how the text is centered and dimmed.
 
 export type FocusModeId = "distraction-free" | "typewriter" | "spotlight" | "deep-work";
 
 /** How much of the note outside the writer's current position is dimmed. */
-export type DimScope = "none" | "paragraph" | "sentence";
+export type DimScope = "none" | "paragraph" | "line";
 
 export interface FocusCharacteristics {
 	/** Collapse both sidebars and the ribbon. */
@@ -19,7 +21,7 @@ export interface FocusCharacteristics {
 	hideTabs: boolean;
 	/** Keep the active line vertically centered while typing. */
 	typewriterScroll: boolean;
-	/** Dim everything except the current paragraph or sentence. */
+	/** Dim everything except the current paragraph or line. */
 	dim: DimScope;
 }
 
@@ -35,26 +37,26 @@ export const FOCUS_MODES: readonly FocusMode[] = [
 	{
 		id: "distraction-free",
 		name: "Distraction-free",
-		description: "Hides the sidebars, tabs and status bar so only the note is left.",
+		description: "Only the page, nothing dimmed.",
 		characteristics: { hideSidebars: true, hideStatusBar: true, hideTabs: true, typewriterScroll: false, dim: "none" },
 	},
 	{
 		id: "typewriter",
 		name: "Typewriter",
-		description: "Keeps the line you are writing vertically centered, like paper rolling through a typewriter.",
-		characteristics: { hideSidebars: false, hideStatusBar: false, hideTabs: false, typewriterScroll: true, dim: "none" },
+		description: "Keeps the line you are writing in a box at the middle.",
+		characteristics: { hideSidebars: true, hideStatusBar: true, hideTabs: true, typewriterScroll: true, dim: "line" },
 	},
 	{
 		id: "spotlight",
 		name: "Spotlight",
-		description: "Dims everything except the paragraph you are writing.",
-		characteristics: { hideSidebars: false, hideStatusBar: false, hideTabs: false, typewriterScroll: false, dim: "paragraph" },
+		description: "Dims all but the current paragraph.",
+		characteristics: { hideSidebars: true, hideStatusBar: true, hideTabs: true, typewriterScroll: false, dim: "paragraph" },
 	},
 	{
 		id: "deep-work",
 		name: "Deep work",
-		description: "Everything at once: no chrome, a centered line, and only the current sentence lit.",
-		characteristics: { hideSidebars: true, hideStatusBar: true, hideTabs: true, typewriterScroll: true, dim: "sentence" },
+		description: "Dims all but the current line.",
+		characteristics: { hideSidebars: true, hideStatusBar: true, hideTabs: true, typewriterScroll: false, dim: "line" },
 	},
 ];
 

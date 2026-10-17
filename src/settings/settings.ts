@@ -2,10 +2,12 @@
 // Copyright (C) 2026 aescanes
 
 import { DEFAULT_APPEARANCE, FocusAppearance, normalizeAppearance } from "../data/focusAppearance";
+import { DEFAULT_FOCUS_MODE, FocusModeId, isFocusModeId } from "../data/focusMode";
 
 /**
  * Persisted state. There is no settings tab: the appearance options live in
- * the focus dock, which writes the writer's last font size, font and theme here.
+ * the focus dock, which writes the writer's last focus mode, font size, font
+ * and theme here.
  */
 export interface ScribeFocusModeSettings extends FocusAppearance {
 	/**
@@ -14,17 +16,27 @@ export interface ScribeFocusModeSettings extends FocusAppearance {
 	 * the "Set focus mode hotkey" command.
 	 */
 	hotkeyPrompted: boolean;
+	/** The focus mode the dock last selected. */
+	mode: FocusModeId;
 }
 
-export const DEFAULT_SETTINGS: ScribeFocusModeSettings = { ...DEFAULT_APPEARANCE, hotkeyPrompted: false };
+export const DEFAULT_SETTINGS: ScribeFocusModeSettings = {
+	...DEFAULT_APPEARANCE,
+	hotkeyPrompted: false,
+	mode: DEFAULT_FOCUS_MODE,
+};
 
 /**
  * Coerces persisted data — which may be absent, partial, or from an older
- * version (including the earlier `mode` field, which is dropped) — into a
+ * version — into a
  * fully valid settings object. `loadData()` returns whatever was last
  * written, so every field is re-checked here rather than trusted.
  */
 export function normalizeSettings(stored: unknown): ScribeFocusModeSettings {
 	const record = typeof stored === "object" && stored !== null ? (stored as Record<string, unknown>) : null;
-	return { ...normalizeAppearance(record), hotkeyPrompted: record?.hotkeyPrompted === true };
+	return {
+		...normalizeAppearance(record),
+		hotkeyPrompted: record?.hotkeyPrompted === true,
+		mode: isFocusModeId(record?.mode) ? record.mode : DEFAULT_FOCUS_MODE,
+	};
 }

@@ -2,9 +2,9 @@
 // Copyright (C) 2026 aescanes
 
 import { addIcon, Plugin } from "obsidian";
-import type { FocusAppearance } from "./data/focusAppearance";
 import { DEFAULT_SETTINGS, normalizeSettings, ScribeFocusModeSettings } from "./settings/settings";
 import { FocusController } from "./views/focusController";
+import { FocusEditorEngine } from "./views/focusEditor";
 import { FOCUS_ICON_ID, FOCUS_ICON_SVG } from "./views/focusIcon";
 import { HotkeyPromptModal } from "./views/hotkeyPrompt";
 
@@ -17,11 +17,15 @@ export default class ScribeFocusModePlugin extends Plugin {
 
 		addIcon(FOCUS_ICON_ID, FOCUS_ICON_SVG);
 
+		const editor = new FocusEditorEngine();
+		this.registerEditorExtension(editor.extension());
+
 		this.controller = this.addChild(
 			new FocusController(
 				this.app,
 				() => this.settings,
-				(patch) => this.updateAppearance(patch),
+				(patch) => this.updateSettings(patch),
+				editor,
 			),
 		);
 
@@ -62,7 +66,7 @@ export default class ScribeFocusModePlugin extends Plugin {
 	}
 
 	/** Merges into the in-memory settings first so the caller can re-render at once, then saves. */
-	private updateAppearance(patch: Partial<FocusAppearance>): void {
+	private updateSettings(patch: Partial<ScribeFocusModeSettings>): void {
 		this.settings = normalizeSettings({ ...this.settings, ...patch });
 		void this.saveData(this.settings);
 	}

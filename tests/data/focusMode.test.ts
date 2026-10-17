@@ -38,7 +38,11 @@ test("body classes reflect the mode's characteristics", () => {
 	assert.deepEqual(focusBodyClasses(getFocusMode("typewriter")), [
 		"scribe-focus-active",
 		"scribe-focus-mode-typewriter",
+		"scribe-focus-hide-sidebars",
+		"scribe-focus-hide-status-bar",
+		"scribe-focus-hide-tabs",
 		"scribe-focus-typewriter",
+		"scribe-focus-dim-line",
 	]);
 	assert.deepEqual(focusBodyClasses(getFocusMode("deep-work")), [
 		"scribe-focus-active",
@@ -46,7 +50,6 @@ test("body classes reflect the mode's characteristics", () => {
 		"scribe-focus-hide-sidebars",
 		"scribe-focus-hide-status-bar",
 		"scribe-focus-hide-tabs",
-		"scribe-focus-typewriter",
-		"scribe-focus-dim-sentence",
+		"scribe-focus-dim-line",
 	]);
 });

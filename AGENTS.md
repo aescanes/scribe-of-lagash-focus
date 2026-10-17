@@ -7,7 +7,7 @@ Guidance for AI agents working on this repository. Read this before making chang
 **Scribe of Lagash - Focus** is an Obsidian plugin that helps writers
 concentrate on their work and remove distractions through focus modes — named
 bundles of characteristics such as hiding the interface, typewriter scrolling,
-and dimming everything but the current paragraph or sentence. It is the third
+and dimming everything but the current paragraph or line. It is the third
 plugin in the **"Scribe of Lagash"** series — a set of independent,
 single-concern Obsidian plugins for planning and writing stories. The series
 shares one per-note frontmatter vocabulary, `scribe-note-*`, but this plugin
@@ -44,7 +44,7 @@ Rules:
 The focus view (hide the interface) and the appearance dock are built and
 confirmed in Obsidian — see "Verification" in
 [`docs/feature-plans/focus-view-and-dock-plan.md`](docs/feature-plans/focus-view-and-dock-plan.md).
-Typewriter scrolling and paragraph/sentence dimming are planned in
+Typewriter scrolling and paragraph/line dimming are planned in
 [`docs/feature-plans/focus-modes-plan.md`](docs/feature-plans/focus-modes-plan.md).
 Update this file and the plans as features land.
 

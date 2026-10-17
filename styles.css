@@ -371,3 +371,48 @@ body {
 .scribe-focus-dock-item.is-selected .scribe-focus-dock-check {
 	display: flex;
 }
+
+/* ---- Focus modes: dimming and typewriter scrolling ----
+   The editor extension in focusEditor.ts marks everything outside the current
+   paragraph or sentence; the stylesheet decides how dim "dimmed" is. */
+
+.scribe-focus-active .scribe-focus-dimmed {
+	opacity: 0.28;
+	transition: opacity 0.2s ease;
+}
+
+/* Typewriter mode only (Deep work centers the text too, but has neither the box
+   nor this title rule): the note title goes (it would sit a screen above the text, past
+   the padding below), and a box marks the middle of the window where the
+   cursor's row always is. The box is transparent; its huge shadow veils the
+   rest of the page, so text outside it is dimmed as it scrolls past. */
+.scribe-focus-mode-typewriter .inline-title {
+	display: none;
+}
+
+/* Room above and below the text, so the first and last lines can reach the middle. */
+.scribe-focus-typewriter .markdown-source-view.mod-cm6 .cm-content {
+	padding-top: 50vh;
+	padding-bottom: 50vh;
+}
+
+.scribe-focus-mode-typewriter::after {
+	content: "";
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: min(calc((var(--file-line-width) + var(--size-4-8)) * 1.5), calc(100vw - var(--size-4-8)));
+	height: calc(var(--scribe-focus-font-size) * 4.8);
+	transform: translate(-50%, -50%);
+	border: 1px solid color-mix(in srgb, var(--scribe-focus-accent) 55%, transparent);
+	border-radius: var(--radius-m);
+	box-shadow: 0 0 0 100vmax color-mix(in srgb, var(--scribe-focus-bg) 72%, transparent);
+	pointer-events: none;
+	z-index: var(--layer-cover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.scribe-focus-active .scribe-focus-dimmed {
+		transition: none;
+	}
+}
