@@ -5,11 +5,19 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DEFAULT_SETTINGS, normalizeSettings } from "../../src/settings/settings";
 
-test("absent data yields the defaults", () => {
+test("absent or malformed data yields the defaults", () => {
 	assert.deepEqual(normalizeSettings(null), DEFAULT_SETTINGS);
+	assert.deepEqual(normalizeSettings("nope"), DEFAULT_SETTINGS);
 });
 
-test("an unknown mode falls back and a valid one is kept", () => {
-	assert.equal(normalizeSettings({ mode: "bogus" as never }).mode, DEFAULT_SETTINGS.mode);
-	assert.equal(normalizeSettings({ mode: "spotlight" }).mode, "spotlight");
+test("the dropped mode field is ignored", () => {
+	assert.deepEqual(normalizeSettings({ mode: "spotlight" }), DEFAULT_SETTINGS);
+});
+
+test("valid stored values are kept", () => {
+	assert.deepEqual(normalizeSettings({ fontSize: 24, fontFamily: "courier-new", theme: "night" }), {
+		fontSize: 24,
+		fontFamily: "courier-new",
+		theme: "night",
+	});
 });

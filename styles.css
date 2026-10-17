@@ -22,24 +22,199 @@ body {
 	color: var(--scribe-accent);
 }
 
-/* ---- Status bar item ---- */
+/* ---- Focus view: hiding the interface ----
+   While focus mode is on, <body> carries `scribe-focus-active`, a
+   `scribe-focus-mode-<id>` class, one class per hide characteristic (see
+   `focusBodyClasses`), and the appearance classes below. Hiding is done in
+   CSS rather than by collapsing the workspace splits, so there is nothing to
+   restore and a disabled plugin can never leave the layout altered.
+   These selectors rely on Obsidian's own class names, which are not a stable
+   API — check them after an Obsidian update. */
 
-.scribe-focus-status-bar {
-	color: var(--scribe-accent);
-	font-weight: var(--font-weight-bold);
-}
-
-.scribe-focus-status-bar.mod-hidden {
+.scribe-focus-hide-sidebars .workspace-ribbon,
+.scribe-focus-hide-sidebars .workspace-split.mod-left-split,
+.scribe-focus-hide-sidebars .workspace-split.mod-right-split,
+.scribe-focus-hide-status-bar .status-bar {
 	display: none;
 }
 
-/* ---- Focus mode ----
-   While focus mode is active, <body> carries `scribe-focus-active`, a
-   `scribe-focus-mode-<id>` class for the mode, and one class per switched-on
-   characteristic (see `focusBodyClasses`):
+/* Tabs: the window title bar, the tab strip and view header, and every pane
+   but the active one, so only the current note is left. */
+.scribe-focus-hide-tabs .titlebar,
+.scribe-focus-hide-tabs .mod-root .workspace-tab-header-container,
+.scribe-focus-hide-tabs .mod-root .view-header,
+.scribe-focus-hide-tabs .mod-root .workspace-leaf-resize-handle,
+.scribe-focus-hide-tabs .mod-root .workspace-tabs:not(.mod-active) {
+	display: none;
+}
 
-     scribe-focus-hide-sidebars    scribe-focus-hide-status-bar
-     scribe-focus-hide-tabs        scribe-focus-typewriter
-     scribe-focus-dim-paragraph    scribe-focus-dim-sentence
+/* ---- Focus view: fonts ----
+   System font stacks only; nothing is bundled. */
 
-   The rules for each characteristic land here as the features are built. */
+.scribe-focus-font-georgia {
+	--scribe-focus-font-family: "Georgia", "Times New Roman", serif;
+}
+
+.scribe-focus-font-times-new-roman {
+	--scribe-focus-font-family: "Times New Roman", "Times", serif;
+}
+
+.scribe-focus-font-courier-new {
+	--scribe-focus-font-family: "Courier New", "Courier", monospace;
+}
+
+.scribe-focus-font-helvetica {
+	--scribe-focus-font-family: "Helvetica", "Arial", sans-serif;
+}
+
+/* ---- Focus view: themes ----
+   A theme is a background and a text color. They are the plugin's own
+   variables, defined only here, so no Obsidian core color is overridden. Each
+   is also used by the dock's swatch of the same name. */
+
+.scribe-focus-theme-paper {
+	--scribe-focus-bg: #fbf8f1;
+	--scribe-focus-fg: #2b2b2b;
+}
+
+.scribe-focus-theme-sepia {
+	--scribe-focus-bg: #f4ecd8;
+	--scribe-focus-fg: #5b4636;
+}
+
+.scribe-focus-theme-dark {
+	--scribe-focus-bg: #1e1e1e;
+	--scribe-focus-fg: #d4d4d4;
+}
+
+.scribe-focus-theme-night {
+	--scribe-focus-bg: #14161a;
+	--scribe-focus-fg: #9aa0a6;
+}
+
+/* ---- Focus view: applying the appearance to the note ----
+   Only the editor and reading view of the open note, and only the body text
+   and the note title. Code keeps Obsidian's own monospace font; headings and
+   links keep their own colors. */
+
+.scribe-focus-active .mod-root,
+.scribe-focus-active .mod-root .view-content,
+.scribe-focus-active .markdown-source-view.mod-cm6 .cm-editor,
+.scribe-focus-active .markdown-preview-view {
+	background-color: var(--scribe-focus-bg);
+}
+
+.scribe-focus-active .markdown-source-view.mod-cm6 .cm-content,
+.scribe-focus-active .markdown-preview-view,
+.scribe-focus-active .inline-title {
+	color: var(--scribe-focus-fg);
+	font-family: var(--scribe-focus-font-family);
+}
+
+.scribe-focus-active .markdown-source-view.mod-cm6 .cm-content,
+.scribe-focus-active .markdown-preview-view {
+	font-size: var(--scribe-focus-font-size);
+}
+
+.scribe-focus-active .markdown-source-view.mod-cm6 .cm-cursor {
+	border-left-color: var(--scribe-focus-fg);
+}
+
+/* ---- Focus dock ---- */
+
+/* The invisible strip along the bottom center that brings the dock back. */
+.scribe-focus-dock-zone {
+	position: fixed;
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	width: min(480px, 90vw);
+	height: var(--size-4-12);
+	z-index: var(--layer-popover);
+}
+
+.scribe-focus-dock {
+	position: fixed;
+	bottom: var(--size-4-4);
+	left: 50%;
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-3);
+	padding: var(--size-4-2) var(--size-4-3);
+	background-color: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-l);
+	z-index: var(--layer-popover);
+
+	/* Hidden: pushed below the window and unclickable, so the zone gets the pointer. */
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, calc(100% + var(--size-4-8)));
+	transition:
+		transform 0.25s ease,
+		opacity 0.25s ease;
+}
+
+.scribe-focus-dock.is-visible {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translate(-50%, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.scribe-focus-dock {
+		transition: none;
+	}
+}
+
+.scribe-focus-dock-group {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-1);
+}
+
+.scribe-focus-dock-size {
+	min-width: var(--size-4-6);
+	text-align: center;
+	color: var(--text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+.scribe-focus-dock-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: var(--size-4-8);
+	height: var(--size-4-8);
+	padding: 0 var(--size-4-2);
+	background: transparent;
+	box-shadow: none;
+	color: var(--text-normal);
+
+	/* A small lift on hover, like the macOS Dock. */
+	transition: transform 0.12s ease;
+}
+
+.scribe-focus-dock-button:hover {
+	transform: translateY(calc(-1 * var(--size-2-2)));
+	background-color: var(--background-modifier-hover);
+}
+
+.scribe-focus-dock-button.is-selected {
+	box-shadow: 0 0 0 2px var(--scribe-accent);
+}
+
+.scribe-focus-dock-font {
+	font-family: var(--scribe-focus-font-family);
+}
+
+.scribe-focus-dock-swatch {
+	min-width: var(--size-4-6);
+	width: var(--size-4-6);
+	height: var(--size-4-6);
+	padding: 0;
+	border-radius: 50%;
+	background-color: var(--scribe-focus-bg);
+	border: 2px solid var(--scribe-focus-fg);
+}

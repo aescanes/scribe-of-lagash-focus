@@ -1,7 +1,11 @@
 # Focus modes — plan
 
-Status: scaffold done (state, settings, commands, body classes); every
-characteristic below is still to build.
+> The first feature to build is [focus-view-and-dock-plan.md](focus-view-and-dock-plan.md)
+> (hide the interface plus the appearance dock). This file covers the wider
+> mode model that comes after it.
+
+Status: the hide characteristics are built as the focus view (see the plan
+above); typewriter and dimming are still to build.
 
 ## Model
 
@@ -24,14 +28,22 @@ to know how a characteristic is realized.
 Focus mode applies to the whole vault; there is no story folder, exclusion list
 or Obsidian settings tab. The entry points are the left ribbon icon and the
 "Toggle focus mode" command (bind a key in Hotkeys — plugin guidelines forbid a
-default one). The plugin's options will live inside focus mode itself; the
-persisted `mode` in `data.json` is what that UI will write.
+default one). The plugin's options live in the focus dock; `data.json` holds the writer's
+font size, font and theme. The persisted `mode` was dropped, since nothing
+chooses a mode yet.
 
 ## Open questions
 
 - Should the on/off state survive restarts? Currently it does not.
+  Answer: Focus mode won't survive the restarts of Obsidian.
 - Where do the in-focus options live (an overlay, a modal, a side panel), and
   how does a writer reach them with the interface hidden?
-- Per-characteristic overrides, or only the four presets?
-- Which editor extensions need registering via `registerEditorExtension`, and
-  do they need a reconfigure on settings change?
+  Answer: in-focus options will live in a dock only when the focus mode is enable
+  (after the user changes some settings in the dock, those will be reflex instantly
+  in the focus mode view (tab with the note)) and will be saved.
+- Per-characteristic overrides, or only the four presets? Likely moot: typewriter
+  and dimming would arrive as extra toggles in the dock.
+- Typewriter and dimming need CodeMirror 6 extensions registered with
+  `registerEditorExtension`. Start with one always-registered extension that
+  checks the body class and does nothing when it is absent, and move to a
+  compartment reconfigured on toggle only if that shows a real cost.

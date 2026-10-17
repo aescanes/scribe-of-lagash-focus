@@ -22,21 +22,27 @@ Rules:
 
 ## Design decisions (from the maintainer)
 
-- **No Obsidian settings tab.** The plugin's options will live inside focus mode
-  itself, to be designed later. Don't add a `PluginSettingTab`.
+- **No Obsidian settings tab.** The plugin's options live in the focus dock,
+  which is only available while focus mode is on. Don't add a `PluginSettingTab`.
 - **No story folder, exclusions or other scope.** Focus mode applies to the
   whole vault.
 - **Entry points:** the left-ribbon icon and a command. The command has no
   default hotkey (Obsidian guidelines); the writer binds a key combination in
-  Hotkeys.
+  Hotkeys. `Esc` leaves focus mode; `Shift` + `Up arrow` shows the dock and
+  `Shift` + `Down arrow` hides it.
+- **Focus mode never survives a restart**, and the appearance (font size, font,
+  theme) applies only while it is on.
+- **Colors:** themes use the plugin's own `--scribe-focus-*` variables on the
+  editor; no Obsidian core color is overridden.
 
 ## Status
 
-This is the first version: a scaffold with **no real focus features**. State,
-settings, commands and the body-class contract exist; the characteristics
-themselves are listed in
+The focus view (hide the interface) and the appearance dock are built and
+confirmed in Obsidian — see "Verification" in
+[`docs/feature-plans/focus-view-and-dock-plan.md`](docs/feature-plans/focus-view-and-dock-plan.md).
+Typewriter scrolling and paragraph/sentence dimming are planned in
 [`docs/feature-plans/focus-modes-plan.md`](docs/feature-plans/focus-modes-plan.md).
-Update this file and that plan as features land.
+Update this file and the plans as features land.
 
 ## Architecture
 
@@ -45,19 +51,30 @@ plugins (Visualization and Goals and Stats): the same build/test/release
 tooling and the `(SL) ` prefix for generated files.
 
 - Entry point: [`src/main.ts`](src/main.ts) → `ScribeFocusModePlugin` — onload
-  wiring only: settings load/save, the `FocusController` child component, the
-  left-ribbon icon and the "Toggle focus mode" command.
-- [`src/data/focusMode.ts`](src/data/focusMode.ts) — **pure, no Obsidian
-  imports**, unit-tested: the `FOCUS_MODES` table, `FocusCharacteristics`,
-  `nextFocusMode`, and `focusBodyClasses` (the mode → `<body>` class contract).
+  wiring only: loads settings, creates the `FocusController`, adds the
+  left-ribbon icon and the "Toggle focus mode" command, and merges and saves
+  appearance changes from the dock.
+- [`src/data/`](src/data/) — **pure, no Obsidian imports**, unit-tested:
+  - `focusMode` — the `FOCUS_MODES` table, `FocusCharacteristics`, and
+    `focusBodyClasses` (the mode → `<body>` class contract). v1 always uses the
+    default (distraction-free) mode.
+  - `focusAppearance` — the fonts, themes, font-size range, `normalizeAppearance`,
+    `stepFontSize`, and `appearanceBodyClasses`.
+  - `dockVisibility` — `dockReduce`, the state machine behind the dock's
+    3-second show/hide.
 - [`src/views/focusController.ts`](src/views/focusController.ts) — owns the
-  on/off state, applies and clears the body classes, and renders the status-bar
-  item.
-- [`src/settings/settings.ts`](src/settings/settings.ts) — persisted state
-  (`mode`) and `normalizeSettings`.
+  on/off state, applies and clears the body classes and the font-size variable,
+  creates and removes the dock, and handles `Esc` and `Shift` + `Up`/`Down arrow`.
+- [`src/views/focusDock.ts`](src/views/focusDock.ts) — the bottom-center dock
+  and its hot zone; turns DOM events into `dockReduce` events and runs the one
+  hide timer.
+- [`src/settings/settings.ts`](src/settings/settings.ts) — persisted appearance
+  (`fontSize`, `fontFamily`, `theme`) and `normalizeSettings`.
 - [`styles.css`](styles.css) — prefer Obsidian's own CSS variables. Plugin
   classes are prefixed `.scribe-`. The magenta brand accent is defined once as
-  `--scribe-accent` / `--scribe-accent-soft`; never introduce another raw hex,
+  `--scribe-accent` / `--scribe-accent-soft`; never introduce another raw hex
+  (the one exception: the four focus theme presets' background and text colors,
+  defined only as `--scribe-focus-bg` / `--scribe-focus-fg` per theme class),
   never set a color from JavaScript, never override a core Obsidian color.
   Focus effects are CSS rules keyed off the body classes.
 

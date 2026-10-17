@@ -8,9 +8,14 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - Initial scaffold: build, test, lint and release tooling shared with the other
   Scribe of Lagash plugins.
-- Four focus modes (distraction-free, typewriter, spotlight, deep work), each a
-  bundle of characteristics.
-- A focus icon in the left ribbon, a status-bar item and a "Toggle focus mode"
-  command (no default hotkey). There is no settings tab and no story-folder
-  scope; focus mode applies to the whole vault. Turning it on only sets body
-  classes for now; the characteristics themselves aren't implemented yet.
+- Focus view: a focus icon in the left ribbon and a "Toggle focus mode" command
+  (no default hotkey) hide the sidebars, ribbon, tabs, view header, status bar,
+  title bar and other panes, leaving only the current note. `Esc` leaves. The
+  plugin has no settings tab and applies to the whole vault; focus mode is
+  always off after a restart.
+- On desktop, focus mode also goes full screen, and leaving full screen (`Esc`)
+  leaves focus mode. `Esc` works whether or not the dock is showing.
+- Appearance dock: a bottom-center bar that shows for 3 seconds, reappears when
+  the pointer reaches the bottom middle (or on `Shift` + `Up arrow`; `Shift` + `Down arrow` hides it), and
+  changes text size, font (Georgia, Times New Roman, Courier New, Helvetica)
+  and theme (Paper, Sepia, Dark, Night) instantly. Choices are remembered.

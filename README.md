@@ -4,13 +4,12 @@
 ![Minimum Obsidian version](https://img.shields.io/badge/obsidian-%E2%89%A51.10.0-8b6cef)
 
 An [Obsidian](https://obsidian.md) plugin that helps writers **concentrate on
-their work and remove distractions** with configurable focus modes. It is part
+their work and remove distractions** with a distraction-free focus view. It is part
 of the **Scribe of Lagash** series, a set of independent, focused tools for
 planning and writing stories in Obsidian.
 
-> **Status: early scaffold.** The plugin's structure, ribbon icon and command are
-> in place, but the focus modes don't change how the editor looks yet. Features
-> land one at a time — see "Planned next".
+> **Status: early version.** The focus view and the appearance dock are in
+> place; more focus features land one at a time — see "Planned next".
 
 ## Thank you
 
@@ -54,31 +53,40 @@ scope and applies to the whole vault.
 
 ## Current features
 
-### Focus modes
+### Focus view
 
-A focus mode is a named bundle of characteristics (hide the interface, center
-the line you are writing, dim everything but the current paragraph or sentence).
-The plugin has no settings tab: click the focus icon in the left ribbon, or run
-the "Toggle focus mode" command, to turn focus mode on and off. Bind the command
-to a key combination in Obsidian's Hotkeys; the plugin doesn't ship a default
-one. Focus mode applies to the whole vault, and the plugin's own options will
-live inside focus mode itself.
+Click the focus icon in the left ribbon, or run the "Toggle focus mode"
+command, to hide everything except the current note: both sidebars, the ribbon,
+the tab strip and view header, the status bar, the title bar and any other
+panes. Leave with `Esc` or by running the same command again. Bind the
+command to a key combination in Obsidian's Hotkeys; the plugin doesn't ship a
+default one. Focus mode applies to the whole vault, and is always off after
+Obsidian restarts.
 
-| Mode | Characteristics |
-| --- | --- |
-| Distraction-free | Hides the sidebars, tabs and status bar. |
-| Typewriter | Keeps the line you are writing vertically centered. |
-| Spotlight | Dims everything except the current paragraph. |
-| Deep work | All of the above, with only the current sentence lit. |
+On desktop, focus mode also takes the window full screen and leaves it again
+when you exit; `Esc` ends both at once.
 
-The plugin never edits your notes; it only changes how the editor is presented.
+### Appearance dock
+
+A small bar at the bottom center of the screen, like the macOS Dock. It shows
+for 3 seconds when focus mode turns on, then hides. Move the pointer to the
+bottom middle of the window, or press `Shift` + `Up arrow`, to bring it back;
+`Shift` + `Down arrow` hides it right away.
+It changes the note instantly and remembers your choices:
+
+- **Text size** — smaller and larger.
+- **Font** — Georgia, Times New Roman, Courier New or Helvetica, applied to the
+  note's text and title (code keeps its own font).
+- **Theme** — Paper, Sepia, Dark or Night.
+
+The plugin has no settings tab, never edits your notes, and only changes how
+the editor looks while focus mode is on.
 
 ## Planned next
 
-- Realize each characteristic: hiding the interface, typewriter scrolling,
-  paragraph and sentence dimming.
-- Options inside focus mode itself, including choosing the mode and overriding
-  individual characteristics.
+- Typewriter scrolling, which keeps the line you are writing centered.
+- Paragraph and sentence dimming, so only what you are writing is lit.
+- More themes and fonts.
 - Session extras that pair with Goals and Stats, such as a timer.
 
 ## Development
