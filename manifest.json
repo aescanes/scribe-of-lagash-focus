@@ -1,0 +1,11 @@
+{
+	"id": "scribe-of-lagash-focus-mode",
+	"name": "Scribe of Lagash - Focus Mode",
+	"version": "0.0.0",
+	"minAppVersion": "1.10.0",
+	"description": "Help writers concentrate on their work and remove distractions with configurable focus modes.",
+	"author": "aescanes",
+	"authorUrl": "",
+	"fundingUrl": "https://ko-fi.com/aescanes",
+	"isDesktopOnly": false
+}

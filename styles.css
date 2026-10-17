@@ -1,0 +1,45 @@
+/* ---- Plugin brand accent ---- */
+
+/* The series' magenta accent, as overridable CSS custom properties. These are
+   set only here in CSS (never from JavaScript) and used only on the plugin's
+   own elements — no core Obsidian color is overridden. A theme or user snippet
+   can restyle the plugin by redefining these. Dark theme lightens them so they
+   stay legible on a dark background. */
+body {
+	--scribe-accent: #81096b;
+	--scribe-accent-soft: #b851a5;
+}
+
+.theme-dark {
+	--scribe-accent: #b851a5;
+	--scribe-accent-soft: #d9a3cc;
+}
+
+/* ---- Ribbon icon ---- */
+
+.scribe-ribbon-icon,
+.scribe-ribbon-icon:hover {
+	color: var(--scribe-accent);
+}
+
+/* ---- Status bar item ---- */
+
+.scribe-focus-status-bar {
+	color: var(--scribe-accent);
+	font-weight: var(--font-weight-bold);
+}
+
+.scribe-focus-status-bar.mod-hidden {
+	display: none;
+}
+
+/* ---- Focus mode ----
+   While focus mode is active, <body> carries `scribe-focus-active`, a
+   `scribe-focus-mode-<id>` class for the mode, and one class per switched-on
+   characteristic (see `focusBodyClasses`):
+
+     scribe-focus-hide-sidebars    scribe-focus-hide-status-bar
+     scribe-focus-hide-tabs        scribe-focus-typewriter
+     scribe-focus-dim-paragraph    scribe-focus-dim-sentence
+
+   The rules for each characteristic land here as the features are built. */
