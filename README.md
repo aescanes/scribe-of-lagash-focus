@@ -55,7 +55,7 @@ scope and applies to the whole vault.
 
 ### Focus view
 
-Click the focus icon in the left ribbon, or run the "Toggle focus mode"
+Click the full-screen icon in the left ribbon, or run the "Toggle focus mode"
 command, to hide everything except the current note: both sidebars, the ribbon,
 the tab strip and view header, the status bar, the title bar and any other
 panes. Leave with `Esc` or by running the same command again. Bind the

@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: MIT
 // Copyright (C) 2026 aescanes
 
-import { Plugin } from "obsidian";
+import { addIcon, Plugin } from "obsidian";
 import type { FocusAppearance } from "./data/focusAppearance";
 import { DEFAULT_SETTINGS, normalizeSettings, ScribeFocusModeSettings } from "./settings/settings";
 import { FocusController } from "./views/focusController";
-
-/** Lucide icon bundled with Obsidian; a custom one can replace it later via `addIcon`. */
-const RIBBON_ICON = "focus";
+import { FOCUS_ICON_ID, FOCUS_ICON_SVG } from "./views/focusIcon";
 
 export default class ScribeFocusModePlugin extends Plugin {
 	settings: ScribeFocusModeSettings = { ...DEFAULT_SETTINGS };
@@ -15,6 +13,8 @@ export default class ScribeFocusModePlugin extends Plugin {
 
 	async onload(): Promise<void> {
 		await this.loadSettings();
+
+		addIcon(FOCUS_ICON_ID, FOCUS_ICON_SVG);
 
 		this.controller = this.addChild(
 			new FocusController(
@@ -25,7 +25,7 @@ export default class ScribeFocusModePlugin extends Plugin {
 		);
 
 		// The left ribbon is the plugin's only visible entry point; there is no settings tab.
-		this.addRibbonIcon(RIBBON_ICON, "(SL) Focus: Toggle focus mode", () => this.controller.toggle()).addClass(
+		this.addRibbonIcon(FOCUS_ICON_ID, "(SL) Focus: Toggle focus mode", () => this.controller.toggle()).addClass(
 			"scribe-ribbon-icon",
 		);
 

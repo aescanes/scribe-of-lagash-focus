@@ -8,7 +8,7 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 - Initial scaffold: build, test, lint and release tooling shared with the other
   Scribe of Lagash plugins.
-- Focus view: a focus icon in the left ribbon and a "Toggle focus mode" command
+- Focus view: a full-screen icon in the left ribbon and a "Toggle focus mode" command
   (no default hotkey) hide the sidebars, ribbon, tabs, view header, status bar,
   title bar and other panes, leaving only the current note. `Esc` leaves. The
   plugin has no settings tab and applies to the whole vault; focus mode is
