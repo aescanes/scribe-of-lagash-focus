@@ -34,6 +34,8 @@ Rules:
   undocumented `app.setting`, feature-detected in `openHotkeySettings`, with a
   `Notice` fallback — it is not public API, so recheck it after Obsidian updates. `Esc` leaves focus mode; `Shift` + `Up arrow` shows the dock and
   `Shift` + `Down arrow` hides it.
+- **Spell check is always off in focus mode** (the editor's `spellcheck`
+  attribute, in `focusEditor.ts`). No setting or dock control, nothing saved.
 - **Focus mode never survives a restart**, and the appearance (font size, font,
   theme) applies only while it is on.
 - **Colors:** themes use the plugin's own `--scribe-focus-*` variables on the

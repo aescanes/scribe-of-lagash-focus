@@ -14,18 +14,22 @@ const refreshEffect = StateEffect.define<null>();
 const rowEffect = StateEffect.define<{ from: number; to: number }>();
 
 /**
- * The editor half of the focus modes: typewriter scrolling and dimming. One
+ * The editor half of focus mode: typewriter scrolling, dimming, and turning
+ * the spell checker off. One
  * always-registered CodeMirror extension that does nothing while both are off,
  * so switching mode only needs `set` — no extension is added or removed.
  * It writes only editor decorations and the scroll position, never the note.
  */
 export class FocusEditorEngine {
+	/** Focus mode is on: the editor's spell checker is off. */
+	active = false;
 	dim: DimScope = "none";
 	typewriter = false;
 	readonly views = new Set<EditorView>();
 
-	set(dim: DimScope, typewriter: boolean): void {
-		if (dim === this.dim && typewriter === this.typewriter) return;
+	set(active: boolean, dim: DimScope, typewriter: boolean): void {
+		if (active === this.active && dim === this.dim && typewriter === this.typewriter) return;
+		this.active = active;
 		this.dim = dim;
 		this.typewriter = typewriter;
 		for (const view of this.views) view.dispatch({ effects: refreshEffect.of(null) });
@@ -37,7 +41,11 @@ export class FocusEditorEngine {
 }
 
 function focusExtension(engine: FocusEditorEngine): Extension {
-	return Prec.highest(
+	return Prec.highest([
+		// Read on every update, so the refresh sent by `set` applies it. Squiggles under
+		// names and invented words are noise while writing; Obsidian's setting is untouched
+		// and applies again as soon as focus mode ends.
+		EditorView.contentAttributes.of(() => (engine.active ? { spellcheck: "false" } : null)),
 		ViewPlugin.fromClass(
 			class {
 				decorations: DecorationSet;
@@ -154,5 +162,5 @@ function focusExtension(engine: FocusEditorEngine): Extension {
 			},
 			{ decorations: (plugin) => plugin.decorations },
 		),
-	);
+	]);
 }

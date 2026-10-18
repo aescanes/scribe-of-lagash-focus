@@ -18,12 +18,15 @@ export interface ScribeFocusModeSettings extends FocusAppearance {
 	hotkeyPrompted: boolean;
 	/** The focus mode the dock last selected. */
 	mode: FocusModeId;
+	/** Key sounds are on while typing in focus mode. */
+	keySounds: boolean;
 }
 
 export const DEFAULT_SETTINGS: ScribeFocusModeSettings = {
 	...DEFAULT_APPEARANCE,
 	hotkeyPrompted: false,
 	mode: DEFAULT_FOCUS_MODE,
+	keySounds: false,
 };
 
 /**
@@ -38,5 +41,6 @@ export function normalizeSettings(stored: unknown): ScribeFocusModeSettings {
 		...normalizeAppearance(record),
 		hotkeyPrompted: record?.hotkeyPrompted === true,
 		mode: isFocusModeId(record?.mode) ? record.mode : DEFAULT_FOCUS_MODE,
+		keySounds: record?.keySounds === true,
 	};
 }

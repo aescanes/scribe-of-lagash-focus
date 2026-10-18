@@ -6,6 +6,11 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- Key sounds: a switch in the dock (off by default, remembered) plays a recorded
+  mechanical keyboard as you type in focus mode, with twelve normal keys and
+  separate sounds for space, Enter and Backspace.
+- Spell check is switched off in the editor while focus mode is on, with no
+  setting; it returns when focus mode ends.
 - Garamond, Baskerville and Palatino fonts. They are offered in the dock only
   when installed on the writer's computer (detected when focus mode turns on).
 - An info button at the right end of the dock that opens a large, centered

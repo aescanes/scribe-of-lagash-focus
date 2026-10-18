@@ -22,6 +22,7 @@ test("valid stored values are kept", () => {
 		theme: "night",
 		hotkeyPrompted: false,
 		mode: DEFAULT_SETTINGS.mode,
+		keySounds: false,
 	});
 });
 
@@ -29,4 +30,10 @@ test("hotkeyPrompted is kept only when it is exactly true", () => {
 	assert.equal(normalizeSettings({ hotkeyPrompted: true }).hotkeyPrompted, true);
 	assert.equal(normalizeSettings({ hotkeyPrompted: "yes" }).hotkeyPrompted, false);
 	assert.equal(DEFAULT_SETTINGS.hotkeyPrompted, false);
+});
+
+test("keySounds is kept only when it is exactly true", () => {
+	assert.equal(normalizeSettings({ keySounds: true }).keySounds, true);
+	assert.equal(normalizeSettings({ keySounds: "on" }).keySounds, false);
+	assert.equal(DEFAULT_SETTINGS.keySounds, false);
 });

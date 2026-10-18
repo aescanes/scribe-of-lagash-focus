@@ -91,6 +91,27 @@ Notes:
   editor (Live Preview and Source mode). Reading view is shown undimmed.
 - Dimming only changes how the editor looks. Your note is never edited.
 
+### Spell check is off in focus mode
+
+While focus mode is on, the editor's spell checker is **always switched off**, so
+no red squiggles appear under names or invented words while you write. There is
+no setting or dock control for this. It applies to the note's text only (not to
+other fields), your Obsidian spell check setting is never changed, and
+spell check works again as soon as you leave focus mode.
+
+### Key sounds
+
+Turn on **Key sounds** in the dock to hear a mechanical keyboard as you type in
+focus mode. The sounds are recordings of a real keyboard: twelve different normal
+keys, plus the space bar, Enter and Backspace (two recordings each), so repeated
+presses do not sound alike. A press never repeats the recording just played, and
+each one varies slightly in pitch and volume. Letters, digits, punctuation and
+Tab use the normal keys, and Delete shares the Backspace sound. Arrows, Shift,
+Ctrl, Cmd and Alt, shortcuts, held-down keys and keys typed through an input
+method (for example, accents or CJK) are silent. Sounds play only in the note's
+editor, only while focus mode is on, and are embedded in the plugin, so nothing
+is downloaded.
+
 ### Appearance dock
 
 A small bar at the bottom center of the screen, like the macOS Dock. It shows
@@ -108,7 +129,7 @@ It changes the note instantly and remembers your choices:
   missing (for example after syncing to another computer) Georgia is shown
   instead, and your choice returns where the font exists.
 - **Theme** — Paper, Sepia, Dark or Night.
-- **Key sounds** — a preview of the on/off switch; it does not play sounds yet.
+- **Key sounds** — on or off (off by default, and remembered). See below.
 - **Info** — the `i` button at the right end opens a large, centered panel with
   a miniature of the dock and a one-line explanation of each control, then the
   dock shortcuts (`Shift` + `Up arrow` or moving the mouse to the bottom center shows the
@@ -119,7 +140,6 @@ the editor looks while focus mode is on.
 
 ## Planned next
 
-- Key sounds.
 - Dimming and typewriter scrolling in Reading view.
 - More themes and fonts.
 - Session extras that pair with Goals and Stats, such as a timer.

@@ -16,6 +16,8 @@ import { ScribeFocusModeSettings } from "../settings/settings";
 import { FocusDock } from "./focusDock";
 import { FocusEditorEngine } from "./focusEditor";
 import { isFontInstalled } from "./fontDetector";
+import { KeySoundPlayer } from "./keySoundPlayer";
+import { keySoundFor } from "../data/keySound";
 
 /** CSS custom property that carries the font size; the one value set from code. */
 const FONT_SIZE_PROPERTY = "--scribe-focus-font-size";
@@ -42,6 +44,7 @@ export class FocusController extends Component {
 	private appliedClasses: string[] = [];
 	private body: HTMLElement | null = null;
 	private dock: FocusDock | null = null;
+	private readonly sounds = new KeySoundPlayer();
 	/** The fonts installed on this computer; checked each time focus mode turns on. */
 	private fonts: readonly FontOption[] = availableFonts(() => false);
 	/** Whether this controller put the window into full screen and so must take it out. */
@@ -62,11 +65,13 @@ export class FocusController extends Component {
 		// marks the event handled before it bubbles up here, so only a listener that
 		// runs first can see it. It never stops or prevents the event.
 		this.registerDomEvent(activeDocument, "keydown", (evt) => this.onDockKey(evt), { capture: true });
+		this.registerDomEvent(activeDocument, "keydown", (evt) => this.onKeySound(evt), { capture: true });
 		this.registerDomEvent(activeDocument, "fullscreenchange", () => this.onFullscreenChange());
 	}
 
 	onunload(): void {
 		this.setEnabled(false);
+		this.sounds.dispose();
 	}
 
 	isEnabled(): boolean {
@@ -87,7 +92,7 @@ export class FocusController extends Component {
 		if (enabled) this.fonts = availableFonts(isFontInstalled);
 		this.refresh();
 		if (enabled) {
-			this.dock = this.addChild(new FocusDock(this.dockHandlers(), this.appearance(), this.getSettings().mode, this.fonts));
+			this.dock = this.addChild(new FocusDock(this.dockHandlers(), this.appearance(), this.getSettings().mode, this.fonts, this.getSettings().keySounds));
 			this.dock.show();
 			void this.enterFullscreen();
 		} else {
@@ -139,8 +144,10 @@ export class FocusController extends Component {
 		this.clearClasses();
 		if (this.enabled) this.applyClasses();
 		const { dim, typewriterScroll } = getFocusMode(this.getSettings().mode).characteristics;
-		this.editor.set(this.enabled ? dim : "none", this.enabled && typewriterScroll);
-		this.dock?.update(this.appearance(), this.getSettings().mode);
+		this.editor.set(this.enabled, this.enabled ? dim : "none", this.enabled && typewriterScroll);
+		this.dock?.update(this.appearance(), this.getSettings().mode, this.getSettings().keySounds);
+		// Decoded ahead of the first key press, so that press is not silent.
+		if (this.enabled && this.getSettings().keySounds) void this.sounds.load();
 	}
 
 	private dockHandlers() {
@@ -148,6 +155,7 @@ export class FocusController extends Component {
 			changeFontSize: (direction: 1 | -1) =>
 				this.change({ fontSize: stepFontSize(this.getSettings().fontSize, direction) }),
 			setMode: (mode: FocusModeId) => this.change({ mode }),
+			setKeySounds: (keySounds: boolean) => this.change({ keySounds }),
 			setFont: (fontFamily: FontId) => this.change({ fontFamily }),
 			setTheme: (theme: ThemeId) => this.change({ theme }),
 		};
@@ -182,6 +190,14 @@ export class FocusController extends Component {
 		const settings = this.getSettings();
 		const installed = this.fonts.some((font) => font.id === settings.fontFamily);
 		return installed ? settings : { ...settings, fontFamily: DEFAULT_APPEARANCE.fontFamily };
+	}
+
+	/** Typing in the note's editor clicks, while focus mode and key sounds are both on. */
+	private onKeySound(evt: KeyboardEvent): void {
+		if (!this.enabled || !this.getSettings().keySounds) return;
+		if (!(evt.target instanceof Element) || !evt.target.closest(".cm-content")) return;
+		const kind = keySoundFor(evt);
+		if (kind) this.sounds.play(kind);
 	}
 
 	private applyClasses(): void {

@@ -14,7 +14,7 @@ const DOCK_GUIDE: readonly { lead: "mode" | "font" | "size" | "theme" | "sounds"
 	{ lead: "font", label: "Font", text: "The typeface of your text." },
 	{ lead: "size", label: "A\u2212 A+", text: "Make the text smaller or larger." },
 	{ lead: "theme", label: "Theme", text: "The color of the page." },
-	{ lead: "sounds", label: "Key sounds", text: "Typing sounds (coming soon)." },
+	{ lead: "sounds", label: "Key sounds", text: "A mechanical key click as you type." },
 	{ lead: "info", label: "", text: "Dock info." },
 ];
 
@@ -33,6 +33,7 @@ const MODE_ICONS: Record<FocusModeId, string> = {
 
 export interface FocusDockHandlers {
 	setMode(id: FocusModeId): void;
+	setKeySounds(on: boolean): void;
 	changeFontSize(direction: 1 | -1): void;
 	setFont(id: FontId): void;
 	setTheme(id: ThemeId): void;
@@ -58,7 +59,6 @@ export class FocusDock extends Component {
 	/** Where the pointer last was, for telling whether it is still over the dock once a menu has gone. */
 	private pointerTarget: Node | null = null;
 	private infoEl: HTMLElement | null = null;
-	private keySounds = false;
 	private fontMenu: DockMenu<FontId> | null = null;
 	private themeMenu: DockMenu<ThemeId> | null = null;
 
@@ -67,6 +67,7 @@ export class FocusDock extends Component {
 		private appearance: FocusAppearance,
 		private mode: FocusModeId,
 		private readonly fonts: readonly FontOption[],
+		private keySounds: boolean,
 	) {
 		super();
 	}
@@ -127,7 +128,7 @@ export class FocusDock extends Component {
 			{ capture: true },
 		);
 
-		this.update(this.appearance, this.mode);
+		this.update(this.appearance, this.mode, this.keySounds);
 	}
 
 	onunload(): void {
@@ -154,9 +155,11 @@ export class FocusDock extends Component {
 	}
 
 	/** Reflects a new appearance in the dock's own controls. */
-	update(appearance: FocusAppearance, mode: FocusModeId): void {
+	update(appearance: FocusAppearance, mode: FocusModeId, keySounds: boolean): void {
 		this.appearance = appearance;
 		this.mode = mode;
+		this.keySounds = keySounds;
+		this.renderSounds();
 		this.modeMenu?.setSelected(mode);
 		if (this.smallerEl) this.smallerEl.disabled = appearance.fontSize <= FONT_SIZE.min;
 		if (this.largerEl) this.largerEl.disabled = appearance.fontSize >= FONT_SIZE.max;
@@ -206,8 +209,7 @@ export class FocusDock extends Component {
 		const el = dock.createEl("button", { cls: "scribe-focus-dock-toggle" });
 		this.soundsEl = el;
 		this.registerDomEvent(el, "click", () => {
-			this.keySounds = !this.keySounds;
-			this.renderSounds();
+			this.handlers.setKeySounds(!this.keySounds);
 		});
 		this.renderSounds();
 	}
