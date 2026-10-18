@@ -138,13 +138,12 @@ body {
 
 /* ---- Focus dock ---- */
 
-/* The invisible strip along the bottom center that brings the dock back. */
+/* The invisible strip along the whole bottom edge that brings the dock back. */
 .scribe-focus-dock-zone {
 	position: fixed;
 	bottom: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	width: min(480px, 90vw);
+	left: 0;
+	width: 100%;
 	height: var(--size-4-12);
 	z-index: var(--layer-popover);
 }

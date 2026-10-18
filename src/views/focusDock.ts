@@ -20,8 +20,9 @@ const DOCK_GUIDE: readonly { lead: "mode" | "font" | "size" | "theme" | "sounds"
 
 /** The shortcuts the info panel lists: the keys, then what they do. */
 const SHORTCUTS: readonly { keys: readonly string[]; alternative?: string; action: string }[] = [
-	{ keys: ["Shift", "\u2191"], alternative: "move the mouse to the bottom center", action: "Show the dock" },
+	{ keys: ["Shift", "\u2191"], alternative: "move the mouse to the bottom edge", action: "Show the dock" },
 	{ keys: ["Shift", "\u2193"], action: "Hide the dock" },
+	{ keys: ["Esc"], action: "Leave focus mode" },
 ];
 
 const MODE_ICONS: Record<FocusModeId, string> = {

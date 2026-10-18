@@ -22,6 +22,8 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   the default Distraction-free. Every mode hides the interface.
 
 ### Changed
+- The dock now comes back when the pointer reaches any part of the bottom edge of
+  the window, not only the bottom center.
 - Redesigned the appearance dock: a wider bar that follows the active focus
   theme, with font and theme dropdowns (name, description and a check on the
   current choice) and flat A− / A+ text-size buttons. An open dropdown keeps

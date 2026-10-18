@@ -112,7 +112,7 @@ is downloaded.
 
 A small bar at the bottom center of the screen, like the macOS Dock. It shows
 for 3 seconds when focus mode turns on, then hides. Move the pointer to the
-bottom middle of the window, or press `Shift` + `Up arrow`, to bring it back;
+bottom edge of the window (anywhere along it, not only where the dock is), or press `Shift` + `Up arrow`, to bring it back;
 `Shift` + `Down arrow` hides it right away.
 It changes the note instantly and remembers your choices:
 
@@ -128,8 +128,9 @@ It changes the note instantly and remembers your choices:
 - **Key sounds** — on or off (off by default, and remembered). See below.
 - **Info** — the `i` button at the right end opens a large, centered panel with
   a miniature of the dock and a one-line explanation of each control, then the
-  dock shortcuts (`Shift` + `Up arrow` or moving the mouse to the bottom center shows the
-  dock, `Shift` + `Down arrow` hides it). Click anywhere or press `Esc` to close it.
+  dock shortcuts (`Shift` + `Up arrow` or moving the mouse to the bottom edge shows the
+  dock, `Shift` + `Down arrow` hides it, `Esc` leaves focus mode). Click anywhere or press
+  `Esc` to close the panel; with the panel open, `Esc` only closes it.
 
 The plugin has no settings tab, never edits your notes, and only changes how
 the editor looks while focus mode is on.

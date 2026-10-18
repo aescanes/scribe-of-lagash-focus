@@ -47,8 +47,8 @@ note reflects each change instantly.
 - **Visibility:** it appears for 3 seconds when focus mode turns on, so the
   writer learns it exists, then slides down and fades out. It never covers the
   text for good.
-- **Reveal:** moving the pointer into an invisible hot zone along the bottom
-  center edge slides it back up. While the pointer is over the dock, or a
+- **Reveal:** moving the pointer into an invisible hot zone along the whole bottom
+  edge of the window slides it back up. While the pointer is over the dock, or a
   control in it has keyboard focus or an open popover, it stays; 3 seconds
   after the pointer leaves (and focus is gone) it hides again.
 - **Controls (v1):**
