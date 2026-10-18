@@ -9,18 +9,14 @@ focus modes. It is part
 of the **Scribe of Lagash** series, a set of independent, focused tools for
 planning and writing stories in Obsidian.
 
-> **Status: early version.** The focus view, the four focus modes and the
-> appearance dock are in place; more features land one at a time — see
-> "Planned next".
-
 ## Thank you
 
 If this plugin helps your writing, you can support its development
 [buying me a coffee on Ko-fi](https://ko-fi.com/O3J528W3FZ)
 
-<div align="center">
+<div align="left">
 
-[![Buy me a coffee](assets/images/buy-me-a-coffee.png)](https://ko-fi.com/O3J528W3FZ)
+[![Buy me a coffee](https://raw.githubusercontent.com/aescanes/scribe-of-lagash-focus/main/assets/images/buy-me-a-coffee.png)](https://ko-fi.com/O3J528W3FZ)
 
 </div>
 
@@ -53,7 +49,7 @@ scope and applies to the whole vault.
 "Scribe" is the writer at the center of every plugin in the series, and
 "Lagash" nods to _Nippur de Lagash_, the classic Argentine comic.
 
-## Current features
+## Features
 
 ### Focus view
 
@@ -78,12 +74,12 @@ Pick a mode from the **Focus mode** menu in the dock. Every mode hides the
 interface the same way (see above); they differ in how the text itself is
 shown. Your choice is remembered for next time.
 
-| Mode | What it does |
-| --- | --- |
-| **Distraction-free** (default) | Only the page: nothing is dimmed and the text scrolls normally. |
-| **Typewriter** | Keeps the line you are writing in a box at the middle of the screen, like paper rolling through a typewriter: the text moves past the box and everything outside it is dimmed. Inside the box only the line with the cursor is lit. The note title is hidden, and the page gets extra space above and below so the first and last lines can reach the middle too. |
-| **Spotlight** | Dims everything except the paragraph you are writing. A paragraph is the run of lines between blank lines. |
-| **Deep work** | Like Spotlight, but narrower: dims everything except the line you are writing. The text is not centered and the note title stays. A line is one row as the editor wraps it, so it ends where the text moves to the next row, even mid-sentence. |
+| Mode                           | What it does                                                                                                                                                                                                                                                                                                                                                      |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Distraction-free** (default) | Only the page: nothing is dimmed and the text scrolls normally.                                                                                                                                                                                                                                                                                                   |
+| **Typewriter**                 | Keeps the line you are writing in a box at the middle of the screen, like paper rolling through a typewriter: the text moves past the box and everything outside it is dimmed. Inside the box only the line with the cursor is lit. The note title is hidden, and the page gets extra space above and below so the first and last lines can reach the middle too. |
+| **Spotlight**                  | Dims everything except the paragraph you are writing. A paragraph is the run of lines between blank lines.                                                                                                                                                                                                                                                        |
+| **Deep work**                  | Like Spotlight, but narrower: dims everything except the line you are writing. The text is not centered and the note title stays. A line is one row as the editor wraps it, so it ends where the text moves to the next row, even mid-sentence.                                                                                                                   |
 
 Notes:
 
@@ -140,8 +136,6 @@ the editor looks while focus mode is on.
 
 ## Planned next
 
-- Dimming and typewriter scrolling in Reading view.
-- More themes and fonts.
 - Session extras that pair with Goals and Stats, such as a timer.
 
 ## Development
