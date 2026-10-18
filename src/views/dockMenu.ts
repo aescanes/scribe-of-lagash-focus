@@ -98,10 +98,12 @@ export class DockMenu<T extends string> extends Component implements DockMenuHan
 			text.createSpan({ cls: `scribe-focus-dock-item-name ${option.previewCls}`, text: option.name });
 			text.createSpan({ cls: "scribe-focus-dock-item-desc", text: option.description });
 			setIcon(item.createSpan({ cls: "scribe-focus-dock-check" }), "check");
-			item.addEventListener("click", () => {
+			item.addEventListener("click", (evt) => {
 				this.onSelect(option.id);
 				this.close();
-				this.triggerEl.focus();
+				// Only a keyboard activation (detail 0) hands focus back to the trigger. After
+				// a mouse click that would count as keyboard focus and pin the dock open.
+				if (evt.detail === 0) this.triggerEl.focus();
 			});
 		}
 		this.popoverEl = popover;

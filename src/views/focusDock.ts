@@ -55,6 +55,8 @@ export class FocusDock extends Component {
 	private modeMenu: DockMenu<FocusModeId> | null = null;
 	private soundsEl: HTMLButtonElement | null = null;
 	private infoButtonEl: HTMLButtonElement | null = null;
+	/** Where the pointer last was, for telling whether it is still over the dock once a menu has gone. */
+	private pointerTarget: Node | null = null;
 	private infoEl: HTMLElement | null = null;
 	private keySounds = false;
 	private fontMenu: DockMenu<FontId> | null = null;
@@ -99,6 +101,13 @@ export class FocusDock extends Component {
 			if ((evt.target as HTMLElement).matches(":focus-visible")) this.dispatch("focusIn");
 		});
 		this.registerDomEvent(dock, "focusout", () => this.dispatch("focusOut"));
+		// Closing a menu removes the element under the pointer, and the browser then sends
+		// no `mouseleave` for the dock until the pointer moves, so the dock would think the
+		// pointer was still inside. Watching the pointer directly repairs that.
+		this.registerDomEvent(activeDocument, "mousemove", (evt) => {
+			this.pointerTarget = evt.target as Node | null;
+			if (this.state.pointerInside && !this.overDock(this.pointerTarget)) this.dispatch("pointerLeave");
+		});
 		// A click anywhere else closes an open menu.
 		this.registerDomEvent(activeDocument, "pointerdown", (evt) => {
 			const target = evt.target as Node | null;
@@ -338,6 +347,11 @@ export class FocusDock extends Component {
 	private onMenuOpenChange(open: boolean): void {
 		if (open) for (const menu of this.menus()) if (menu.isOpen()) menu.close();
 		this.dispatch(open ? "menuOpen" : "menuClose");
+		if (!open && this.state.pointerInside && !this.overDock(this.pointerTarget)) this.dispatch("pointerLeave");
+	}
+
+	private overDock(node: Node | null): boolean {
+		return node !== null && (this.dockEl?.contains(node) === true || this.zoneEl?.contains(node) === true);
 	}
 
 	private dispatch(event: DockEvent): void {

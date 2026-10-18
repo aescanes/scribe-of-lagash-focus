@@ -30,6 +30,8 @@
 	"author": "aescanes",
 	"license": "MIT",
 	"devDependencies": {
+		"@codemirror/state": "6.5.0",
+		"@codemirror/view": "6.38.6",
 		"@types/node": "24.13.3",
 		"esbuild": "0.28.2",
 		"eslint": "10.9.1",
