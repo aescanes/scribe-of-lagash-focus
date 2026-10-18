@@ -8,6 +8,22 @@ import { FocusAppearance, FONT_SIZE, FONTS, FontId, THEMES, ThemeId } from "../d
 import { DockMenu, DockMenuHandle } from "./dockMenu";
 
 /** Lucide icon per focus mode, for the menu and its trigger. */
+/** What the info panel's miniature dock shows for each control, and its one-line explanation. */
+const DOCK_GUIDE: readonly { lead: "mode" | "font" | "size" | "theme" | "sounds" | "info"; label: string; text: string }[] = [
+	{ lead: "mode", label: "Focus mode", text: "How the page is dimmed or centered." },
+	{ lead: "font", label: "Font", text: "The typeface of your text." },
+	{ lead: "size", label: "A\u2212 A+", text: "Make the text smaller or larger." },
+	{ lead: "theme", label: "Theme", text: "The color of the page." },
+	{ lead: "sounds", label: "Key sounds", text: "Typing sounds (coming soon)." },
+	{ lead: "info", label: "", text: "Dock info." },
+];
+
+/** The shortcuts the info panel lists: the keys, then what they do. */
+const SHORTCUTS: readonly { keys: readonly string[]; alternative?: string; action: string }[] = [
+	{ keys: ["Shift", "\u2191"], alternative: "move the mouse to the bottom center", action: "Show the dock" },
+	{ keys: ["Shift", "\u2193"], action: "Hide the dock" },
+];
+
 const MODE_ICONS: Record<FocusModeId, string> = {
 	"distraction-free": "file-text",
 	typewriter: "keyboard",
@@ -38,6 +54,8 @@ export class FocusDock extends Component {
 	private largerEl: HTMLButtonElement | null = null;
 	private modeMenu: DockMenu<FocusModeId> | null = null;
 	private soundsEl: HTMLButtonElement | null = null;
+	private infoButtonEl: HTMLButtonElement | null = null;
+	private infoEl: HTMLElement | null = null;
 	private keySounds = false;
 	private fontMenu: DockMenu<FontId> | null = null;
 	private themeMenu: DockMenu<ThemeId> | null = null;
@@ -68,6 +86,8 @@ export class FocusDock extends Component {
 		this.buildThemeMenu(dock);
 		dock.createDiv({ cls: "scribe-focus-dock-divider" });
 		this.buildSoundsToggle(dock);
+		dock.createDiv({ cls: "scribe-focus-dock-divider" });
+		this.buildInfoButton(dock);
 
 		this.registerDomEvent(zone, "mouseenter", () => this.dispatch("pointerEnter"));
 		this.registerDomEvent(zone, "mouseleave", () => this.dispatch("pointerLeave"));
@@ -83,13 +103,27 @@ export class FocusDock extends Component {
 		this.registerDomEvent(activeDocument, "pointerdown", (evt) => {
 			const target = evt.target as Node | null;
 			for (const menu of this.menus()) if (!menu.contains(target)) menu.close();
+			if (this.infoEl && !this.infoButtonEl?.contains(target)) this.closeInfo();
 		});
+		// Capture phase and prevented, so Esc closes the panel without also leaving focus mode.
+		this.registerDomEvent(
+			activeDocument,
+			"keydown",
+			(evt) => {
+				if (evt.key !== "Escape" || !this.infoEl) return;
+				evt.preventDefault();
+				this.closeInfo();
+			},
+			{ capture: true },
+		);
 
 		this.update(this.appearance, this.mode);
 	}
 
 	onunload(): void {
 		this.clearTimer();
+		this.infoEl?.remove();
+		this.infoEl = null;
 		this.zoneEl?.remove();
 		this.dockEl?.remove();
 		this.modeMenu?.unload();
@@ -224,6 +258,78 @@ export class FocusDock extends Component {
 		);
 	}
 
+	private buildInfoButton(dock: HTMLElement): void {
+		const el = dock.createEl("button", { cls: "scribe-focus-dock-size" });
+		el.setAttr("aria-label", "Keyboard shortcuts");
+		el.setAttr("title", "Keyboard shortcuts");
+		el.setAttr("aria-haspopup", "dialog");
+		setIcon(el, "info");
+		this.infoButtonEl = el;
+		this.registerDomEvent(el, "click", () => (this.infoEl ? this.closeInfo() : this.openInfo()));
+	}
+
+	/**
+	 * Appended to <body>, not to the dock: the dock is transformed, which would
+	 * make a fixed child centre on the dock instead of the window.
+	 */
+	private openInfo(): void {
+		if (this.infoEl) return;
+		for (const menu of this.menus()) menu.close();
+		const panel = activeDocument.body.createDiv({ cls: "scribe-focus-info" });
+		panel.setAttr("role", "dialog");
+		panel.setAttr("aria-label", "Keyboard shortcuts");
+		const card = panel.createDiv({ cls: "scribe-focus-info-card" });
+		card.createDiv({ cls: "scribe-focus-info-title", text: "The dock" });
+		this.buildGuide(card);
+		card.createDiv({ cls: "scribe-focus-info-title", text: "Keyboard shortcuts" });
+		for (const shortcut of SHORTCUTS) {
+			const row = card.createDiv({ cls: "scribe-focus-info-row" });
+			const keys = row.createSpan({ cls: "scribe-focus-info-keys" });
+			shortcut.keys.forEach((key, i) => {
+				if (i > 0) keys.createSpan({ cls: "scribe-focus-info-plus", text: "+" });
+				keys.createEl("kbd", { text: key });
+			});
+			if (shortcut.alternative) {
+				keys.createSpan({ cls: "scribe-focus-info-plus", text: "or" });
+				keys.createSpan({ cls: "scribe-focus-info-alternative", text: shortcut.alternative });
+			}
+			row.createSpan({ cls: "scribe-focus-info-action", text: shortcut.action });
+		}
+		this.infoEl = panel;
+		this.dispatch("menuOpen");
+	}
+
+	/** A non-interactive miniature of the dock, its parts numbered to match a short list below it. */
+	private buildGuide(card: HTMLElement): void {
+		const mini = card.createDiv({ cls: "scribe-focus-info-mini" });
+		mini.setAttr("aria-hidden", "true");
+		const list = card.createDiv({ cls: "scribe-focus-info-list" });
+		// Two columns, each its own block so the rows inside line up on their left edge.
+		const columns = [list.createDiv({ cls: "scribe-focus-info-column" }), list.createDiv({ cls: "scribe-focus-info-column" })];
+		DOCK_GUIDE.forEach((part, i) => {
+			const item = mini.createDiv({ cls: "scribe-focus-info-mini-item" });
+			const lead = item.createSpan({ cls: "scribe-focus-dock-lead" });
+			if (part.lead === "mode") setIcon(lead, MODE_ICONS[this.mode]);
+			else if (part.lead === "font") lead.createSpan({ cls: "scribe-focus-dock-font", text: "Aa" });
+			else if (part.lead === "theme") lead.createSpan({ cls: "scribe-focus-dock-swatch" });
+			else if (part.lead === "sounds") setIcon(lead, "volume-x");
+			else if (part.lead === "info") setIcon(lead, "info");
+			if (part.label) item.createSpan({ text: part.label });
+			item.createSpan({ cls: "scribe-focus-info-badge", text: String(i + 1) });
+
+			const row = columns[i < 3 ? 0 : 1].createDiv({ cls: "scribe-focus-info-list-row" });
+			row.createSpan({ cls: "scribe-focus-info-badge", text: String(i + 1) });
+			row.createSpan({ text: part.text });
+		});
+	}
+
+	private closeInfo(): void {
+		if (!this.infoEl) return;
+		this.infoEl.remove();
+		this.infoEl = null;
+		this.dispatch("menuClose");
+	}
+
 	private menus(): DockMenuHandle[] {
 		return [this.modeMenu, this.fontMenu, this.themeMenu].filter((m): m is NonNullable<typeof m> => m !== null);
 	}
@@ -242,7 +348,10 @@ export class FocusDock extends Component {
 			this.timer = window.setTimeout(() => this.dispatch("timerElapsed"), DOCK_HIDE_DELAY_MS);
 		}
 		this.dockEl?.toggleClass("is-visible", this.state.visible);
-		if (!this.state.visible) for (const menu of this.menus()) menu.close();
+		if (!this.state.visible) {
+			for (const menu of this.menus()) menu.close();
+			this.closeInfo();
+		}
 	}
 
 	private clearTimer(): void {

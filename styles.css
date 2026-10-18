@@ -140,7 +140,8 @@ body {
 /* The dock takes its colors from the active focus theme, so it reads as part
    of the page. Outside focus mode no theme class is on <body> and the
    fallbacks are Obsidian's own colors; the dock only exists in focus mode. */
-.scribe-focus-dock {
+.scribe-focus-dock,
+.scribe-focus-info {
 	--dock-surface: color-mix(in srgb, var(--scribe-focus-bg, var(--background-secondary)) 88%, #fff);
 	--dock-text: var(--scribe-focus-fg, var(--text-normal));
 	--dock-muted: color-mix(in srgb, var(--dock-text) 62%, transparent);
@@ -148,7 +149,9 @@ body {
 	--dock-hover: color-mix(in srgb, var(--dock-text) 9%, transparent);
 	--dock-accent: var(--scribe-focus-accent, var(--scribe-accent));
 	--dock-selected: color-mix(in srgb, var(--dock-accent) 16%, transparent);
+}
 
+.scribe-focus-dock {
 	position: fixed;
 	bottom: var(--size-4-4);
 	left: 50%;
@@ -415,4 +418,134 @@ body {
 	.scribe-focus-active .scribe-focus-dimmed {
 		transition: none;
 	}
+}
+
+/* ---- Dock: keyboard shortcuts panel ----
+   Centered over the window with large lettering, so it can be read at a glance. */
+
+.scribe-focus-info {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: color-mix(in srgb, var(--scribe-focus-bg, var(--background-primary)) 70%, transparent);
+	z-index: var(--layer-popover);
+}
+
+.scribe-focus-info-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-5);
+	padding: var(--size-4-8) var(--size-4-10);
+	background-color: var(--dock-surface);
+	color: var(--dock-text);
+	border: 1px solid var(--dock-border);
+	border-radius: var(--radius-xl);
+	box-shadow: var(--shadow-l);
+}
+
+.scribe-focus-info-title {
+	color: var(--dock-muted);
+	font-size: var(--font-ui-large);
+	text-align: center;
+}
+
+.scribe-focus-info-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--size-4-12);
+	font-size: var(--font-ui-larger);
+}
+
+.scribe-focus-info-keys {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+}
+
+.scribe-focus-info-keys kbd {
+	min-width: var(--size-4-12);
+	padding: var(--size-4-2) var(--size-4-4);
+	background-color: var(--dock-hover);
+	border: 1px solid var(--dock-border);
+	border-radius: var(--radius-m);
+	color: var(--dock-text);
+	font-family: var(--font-interface);
+	font-size: var(--font-ui-larger);
+	font-weight: var(--font-semibold);
+	text-align: center;
+}
+
+.scribe-focus-info-plus {
+	color: var(--dock-muted);
+}
+
+/* The miniature dock: a small, non-interactive copy with numbered parts. */
+
+.scribe-focus-info-mini {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-3);
+	padding: var(--size-4-3) var(--size-4-4);
+	border: 1px solid var(--dock-border);
+	border-radius: var(--radius-xl);
+	font-size: var(--font-ui-small);
+}
+
+.scribe-focus-info-mini-item {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-2);
+	padding: var(--size-4-2);
+	white-space: nowrap;
+}
+
+.scribe-focus-info-badge {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--size-4-5);
+	height: var(--size-4-5);
+	border-radius: 50%;
+	background-color: var(--dock-selected);
+	color: var(--dock-accent);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
+}
+
+.scribe-focus-info-list {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0 var(--size-4-8);
+}
+
+/* Two columns meeting at the middle of the miniature: the first block ends
+   there (its longest row sets the edge), the second starts there. */
+.scribe-focus-info-column {
+	display: flex;
+	flex-direction: column;
+	gap: var(--size-4-2);
+}
+
+.scribe-focus-info-column:first-child {
+	justify-self: end;
+}
+
+.scribe-focus-info-column:last-child {
+	justify-self: start;
+}
+
+.scribe-focus-info-list-row {
+	display: flex;
+	align-items: center;
+	gap: var(--size-4-3);
+	font-size: var(--font-ui-medium);
+}
+
+.scribe-focus-info-alternative {
+	font-size: var(--font-ui-medium);
 }

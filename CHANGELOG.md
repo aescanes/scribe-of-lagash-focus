@@ -6,6 +6,9 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- An info button at the right end of the dock that opens a large, centered
+  panel: a miniature of the dock with a one-line explanation of each control,
+  and the dock's keyboard shortcuts.
 - Focus modes, chosen from the dock's Focus mode menu and remembered: Typewriter
   (keeps the current line centered), Spotlight (dims all but the current
   paragraph) and Deep work (dims all but the current line), alongside

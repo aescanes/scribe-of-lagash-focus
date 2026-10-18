@@ -105,6 +105,10 @@ It changes the note instantly and remembers your choices:
   note's text and title (code keeps its own font).
 - **Theme** — Paper, Sepia, Dark or Night.
 - **Key sounds** — a preview of the on/off switch; it does not play sounds yet.
+- **Info** — the `i` button at the right end opens a large, centered panel with
+  a miniature of the dock and a one-line explanation of each control, then the
+  dock shortcuts (`Shift` + `Up arrow` or moving the mouse to the bottom center shows the
+  dock, `Shift` + `Down arrow` hides it). Click anywhere or press `Esc` to close it.
 
 The plugin has no settings tab, never edits your notes, and only changes how
 the editor looks while focus mode is on.
