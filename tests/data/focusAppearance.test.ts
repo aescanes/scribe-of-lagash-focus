@@ -5,6 +5,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
 	appearanceBodyClasses,
+	availableFonts,
 	clampFontSize,
 	DEFAULT_APPEARANCE,
 	FONT_SIZE,
@@ -50,4 +51,21 @@ test("body classes name the font and theme", () => {
 		"scribe-focus-font-courier-new",
 		"scribe-focus-theme-night",
 	]);
+});
+
+test("fonts with a probe are offered only when one of its families is installed", () => {
+	const none = availableFonts(() => false);
+	assert.ok(none.length > 0);
+	assert.ok(none.every((f) => !f.probe));
+	assert.ok(!none.some((f) => f.id === "garamond"));
+
+	const withBaskerville = availableFonts((family) => family === "Baskerville Old Face");
+	assert.ok(withBaskerville.some((f) => f.id === "baskerville"));
+	assert.ok(!withBaskerville.some((f) => f.id === "garamond"));
+
+	assert.equal(availableFonts(() => true).length, FONTS.length);
+});
+
+test("the default font is always available", () => {
+	assert.ok(availableFonts(() => false).some((f) => f.id === DEFAULT_APPEARANCE.fontFamily));
 });

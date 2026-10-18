@@ -54,8 +54,9 @@ note reflects each change instantly.
 - **Controls (v1):**
   - **Font size** — smaller / larger buttons with the current size shown,
     stepped within a clamped range.
-  - **Font** — four system font stacks: Georgia, Times New Roman, Courier New
-    and Helvetica. No bundled font files: that keeps the plugin small and
+  - **Font** — system font stacks: Georgia, Garamond, Baskerville, Palatino,
+    Times New Roman, Courier New and Helvetica. Garamond, Baskerville and Palatino
+    are hidden when not installed (a canvas width check, `fontDetector.ts`). No bundled font files: that keeps the plugin small and
     dependency-free. Applied to the note's body text and title only; code keeps
     Obsidian's monospace font.
   - **Theme** — four presets, each a background color plus a text color:

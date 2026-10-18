@@ -101,8 +101,12 @@ It changes the note instantly and remembers your choices:
 
 - **Focus mode** — Distraction-free, Typewriter, Spotlight or Deep work (see above).
 - **Text size** — smaller and larger.
-- **Font** — Georgia, Times New Roman, Courier New or Helvetica, applied to the
-  note's text and title (code keeps its own font).
+- **Font** — Georgia, Garamond, Baskerville, Palatino, Times New Roman, Courier
+  New or Helvetica, applied to the note's text and title (code keeps its own
+  font). Garamond, Baskerville and Palatino are listed only if they are
+  installed on your computer; the others are always listed. If a saved font is
+  missing (for example after syncing to another computer) Georgia is shown
+  instead, and your choice returns where the font exists.
 - **Theme** — Paper, Sepia, Dark or Night.
 - **Key sounds** — a preview of the on/off switch; it does not play sounds yet.
 - **Info** — the `i` button at the right end opens a large, centered panel with

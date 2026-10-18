@@ -2,11 +2,20 @@
 // Copyright (C) 2026 aescanes
 
 import { App, Component, MarkdownView, Notice, Platform } from "obsidian";
-import { appearanceBodyClasses, FontId, stepFontSize, ThemeId } from "../data/focusAppearance";
+import {
+	appearanceBodyClasses,
+	availableFonts,
+	DEFAULT_APPEARANCE,
+	FontId,
+	FontOption,
+	stepFontSize,
+	ThemeId,
+} from "../data/focusAppearance";
 import { FocusModeId, focusBodyClasses, getFocusMode } from "../data/focusMode";
 import { ScribeFocusModeSettings } from "../settings/settings";
 import { FocusDock } from "./focusDock";
 import { FocusEditorEngine } from "./focusEditor";
+import { isFontInstalled } from "./fontDetector";
 
 /** CSS custom property that carries the font size; the one value set from code. */
 const FONT_SIZE_PROPERTY = "--scribe-focus-font-size";
@@ -33,6 +42,8 @@ export class FocusController extends Component {
 	private appliedClasses: string[] = [];
 	private body: HTMLElement | null = null;
 	private dock: FocusDock | null = null;
+	/** The fonts installed on this computer; checked each time focus mode turns on. */
+	private fonts: readonly FontOption[] = availableFonts(() => false);
 	/** Whether this controller put the window into full screen and so must take it out. */
 	private enteredFullscreen = false;
 
@@ -73,9 +84,10 @@ export class FocusController extends Component {
 			return;
 		}
 		this.enabled = enabled;
+		if (enabled) this.fonts = availableFonts(isFontInstalled);
 		this.refresh();
 		if (enabled) {
-			this.dock = this.addChild(new FocusDock(this.dockHandlers(), this.getSettings(), this.getSettings().mode));
+			this.dock = this.addChild(new FocusDock(this.dockHandlers(), this.appearance(), this.getSettings().mode, this.fonts));
 			this.dock.show();
 			void this.enterFullscreen();
 		} else {
@@ -128,7 +140,7 @@ export class FocusController extends Component {
 		if (this.enabled) this.applyClasses();
 		const { dim, typewriterScroll } = getFocusMode(this.getSettings().mode).characteristics;
 		this.editor.set(this.enabled ? dim : "none", this.enabled && typewriterScroll);
-		this.dock?.update(this.getSettings(), this.getSettings().mode);
+		this.dock?.update(this.appearance(), this.getSettings().mode);
 	}
 
 	private dockHandlers() {
@@ -161,8 +173,19 @@ export class FocusController extends Component {
 		else if (evt.key === "ArrowDown") this.dock?.hide();
 	}
 
+	/**
+	 * The settings as shown: a saved font that is not installed here (settings
+	 * can come from another computer) is shown as the default, but not saved
+	 * over, so it comes back where the font exists.
+	 */
+	private appearance(): ScribeFocusModeSettings {
+		const settings = this.getSettings();
+		const installed = this.fonts.some((font) => font.id === settings.fontFamily);
+		return installed ? settings : { ...settings, fontFamily: DEFAULT_APPEARANCE.fontFamily };
+	}
+
 	private applyClasses(): void {
-		const appearance = this.getSettings();
+		const appearance = this.appearance();
 		this.body = activeDocument.body;
 		this.appliedClasses = [
 			...focusBodyClasses(getFocusMode(appearance.mode)),

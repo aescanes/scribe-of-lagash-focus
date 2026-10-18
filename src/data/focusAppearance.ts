@@ -5,7 +5,7 @@
 // Colors and font stacks live in styles.css, keyed by the ids below; code only
 // decides which ids are active, so no color is ever set from JavaScript.
 
-export type FontId = "georgia" | "times-new-roman" | "courier-new" | "helvetica";
+export type FontId = "georgia" | "garamond" | "baskerville" | "palatino" | "times-new-roman" | "courier-new" | "helvetica";
 export type ThemeId = "paper" | "sepia" | "dark" | "night";
 
 export interface FontOption {
@@ -13,6 +13,13 @@ export interface FontOption {
 	name: string;
 	/** The short line shown under the name in the dock's menu. */
 	description: string;
+	/**
+	 * Family names to look for on the writer's computer. A font that has them
+	 * but finds none installed is left out of the dock (see `availableFonts`);
+	 * one without them is always offered. The names are the ones `styles.css`
+	 * lists first for the font, so a font is only offered if it will really show.
+	 */
+	probe?: readonly string[];
 }
 
 export interface ThemeOption {
@@ -23,7 +30,20 @@ export interface ThemeOption {
 
 /** In display order. Every font is a system font, so nothing is bundled. */
 export const FONTS: readonly FontOption[] = [
-	{ id: "georgia", name: "Georgia", description: "Serif · classic book text" },
+	{ id: "georgia", name: "Georgia", description: "Serif · made for screens" },
+	{ id: "garamond", name: "Garamond", description: "Serif · classic novel text", probe: ["Garamond", "EB Garamond"] },
+	{
+		id: "baskerville",
+		name: "Baskerville",
+		description: "Serif · refined, high contrast",
+		probe: ["Baskerville", "Baskerville Old Face", "Libre Baskerville"],
+	},
+	{
+		id: "palatino",
+		name: "Palatino",
+		description: "Serif · sturdy and clear",
+		probe: ["Palatino", "Palatino Linotype", "Book Antiqua", "URW Palladio L"],
+	},
 	{ id: "times-new-roman", name: "Times New Roman", description: "Serif · traditional print" },
 	{ id: "courier-new", name: "Courier New", description: "Mono · a typescript feel" },
 	{ id: "helvetica", name: "Helvetica", description: "Sans · clean and neutral" },
@@ -51,6 +71,11 @@ export const DEFAULT_APPEARANCE: FocusAppearance = {
 	fontFamily: FONTS[0].id,
 	theme: THEMES[0].id,
 };
+
+/** The fonts to offer: those with no `probe`, plus those with at least one probed family installed. */
+export function availableFonts(isInstalled: (family: string) => boolean): FontOption[] {
+	return FONTS.filter((font) => !font.probe || font.probe.some(isInstalled));
+}
 
 export function isFontId(value: unknown): value is FontId {
 	return FONTS.some((font) => font.id === value);

@@ -6,6 +6,8 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- Garamond, Baskerville and Palatino fonts. They are offered in the dock only
+  when installed on the writer's computer (detected when focus mode turns on).
 - An info button at the right end of the dock that opens a large, centered
   panel: a miniature of the dock with a one-line explanation of each control,
   and the dock's keyboard shortcuts.

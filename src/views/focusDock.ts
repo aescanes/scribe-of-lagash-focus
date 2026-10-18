@@ -4,7 +4,7 @@
 import { Component, setIcon } from "obsidian";
 import { DOCK_HIDE_DELAY_MS, dockReduce, DockEvent, DockState, INITIAL_DOCK_STATE } from "../data/dockVisibility";
 import { FocusModeId, FOCUS_MODES } from "../data/focusMode";
-import { FocusAppearance, FONT_SIZE, FONTS, FontId, THEMES, ThemeId } from "../data/focusAppearance";
+import { FocusAppearance, FONT_SIZE, FontId, FontOption, THEMES, ThemeId } from "../data/focusAppearance";
 import { DockMenu, DockMenuHandle } from "./dockMenu";
 
 /** Lucide icon per focus mode, for the menu and its trigger. */
@@ -66,6 +66,7 @@ export class FocusDock extends Component {
 		private readonly handlers: FocusDockHandlers,
 		private appearance: FocusAppearance,
 		private mode: FocusModeId,
+		private readonly fonts: readonly FontOption[],
 	) {
 		super();
 	}
@@ -227,7 +228,7 @@ export class FocusDock extends Component {
 			new DockMenu<FontId>(
 				dock,
 				"Font",
-				FONTS.map((font) => ({
+				this.fonts.map((font) => ({
 					id: font.id,
 					name: font.name,
 					description: font.description,

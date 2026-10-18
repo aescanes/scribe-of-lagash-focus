@@ -55,6 +55,18 @@ body {
 	--scribe-focus-font-family: "Georgia", "Times New Roman", serif;
 }
 
+.scribe-focus-font-garamond {
+	--scribe-focus-font-family: "Garamond", "EB Garamond", "Times New Roman", serif;
+}
+
+.scribe-focus-font-baskerville {
+	--scribe-focus-font-family: "Baskerville", "Baskerville Old Face", "Libre Baskerville", "Georgia", serif;
+}
+
+.scribe-focus-font-palatino {
+	--scribe-focus-font-family: "Palatino", "Palatino Linotype", "Book Antiqua", "URW Palladio L", serif;
+}
+
 .scribe-focus-font-times-new-roman {
 	--scribe-focus-font-family: "Times New Roman", "Times", serif;
 }
