@@ -6,9 +6,12 @@ import { App, Modal, Notice, Setting } from "obsidian";
 /** What the Hotkeys screen's search box is filled with. */
 const HOTKEY_SEARCH = "Focus mode";
 
+/** Long enough for the Hotkeys tab to finish drawing its list. */
+const SEARCH_RETRY_MS = 150;
+
 /** The parts of Obsidian's (undocumented) Hotkeys tab that this relies on. */
 interface HotkeysTab {
-	searchComponent?: { setValue(value: string): unknown };
+	searchComponent?: { setValue(value: string): unknown; inputEl?: HTMLInputElement };
 	updateHotkeyVisibility?: () => void;
 }
 
@@ -28,6 +31,19 @@ function getSettingModal(app: App): SettingModal | null {
 }
 
 /**
+ * Fills the search box and makes the list react to it. `setValue` alone only
+ * changes the text, so the same `input` event typing would send is fired too,
+ * which is what Obsidian filters on.
+ */
+function applySearch(tab: HotkeysTab | undefined): void {
+	const search = tab?.searchComponent;
+	if (!search) return;
+	search.setValue(HOTKEY_SEARCH);
+	search.inputEl?.dispatchEvent(new Event("input", { bubbles: true }));
+	tab?.updateHotkeyVisibility?.();
+}
+
+/**
  * Opens Obsidian's own Hotkeys screen filtered to this plugin's command, so the
  * writer gets Obsidian's key capture and conflict warnings. There is no public
  * API for this: it uses the undocumented `app.setting`, feature-detected, and
@@ -40,10 +56,11 @@ export function openHotkeySettings(app: App): boolean {
 	try {
 		setting.open();
 		setting.openTabById("hotkeys");
-		const tab = setting.activeTab;
-		// setValue alone doesn't re-filter the list.
-		tab?.searchComponent?.setValue(HOTKEY_SEARCH);
-		tab?.updateHotkeyVisibility?.();
+		applySearch(setting.activeTab);
+		// The tab can finish drawing its list after the call above and show it unfiltered
+		// (the box says "Focus mode" but nothing is filtered until you edit it), so apply
+		// the search once more when it has settled.
+		window.setTimeout(() => applySearch(setting.activeTab), SEARCH_RETRY_MS);
 		return true;
 	} catch {
 		return false;
