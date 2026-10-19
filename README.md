@@ -42,8 +42,8 @@ plugins for planning and writing stories:
 - **[Scribe of Lagash - Focus](https://community.obsidian.md/plugins/scribe-of-lagash-focus)** ([github repository](https://github.com/aescanes/scribe-of-lagash-focus)) —
   helps writers focus on their work and remove distractions.
 
-Each plugin works fine on its own, and none requires another, but they work better together. Visualization and Goals and Stats each have a **Story folder** setting; Focus Mode has no
-scope and applies to the whole vault.
+Each plugin works fine on its own, and none requires another, but they are
+designed to complement each other and work best together.
 
 ### About the name
 
