@@ -81,25 +81,25 @@ shown. Your choice is remembered for next time.
 
 Only the page: nothing is dimmed and the text scrolls normally.
 
-<img src="docs/images/distraction-free-mode.png" alt="Distraction free mode" width="400px">
+<img src="docs/images/distraction-free-mode.png" alt="Distraction free mode">
 
 #### **Typewriter**
 
 Keeps the line you are writing in a box at the middle of the screen, like paper rolling through a typewriter: the text moves past the box and everything outside it is dimmed. Inside the box only the line with the cursor is lit. The note title is hidden, and the page gets extra space above and below so the first and last lines can reach the middle too.
 
-<img src="docs/images/typewriter-mode.png" alt="Typewriter mode" width="400px">
+<img src="docs/images/typewriter-mode.png" alt="Typewriter mode">
 
 #### **Spotlight**
 
 Dims everything except the paragraph you are writing. A paragraph is the run of lines between blank lines.
 
-<img src="docs/images/spotlight-mode.png" alt="Spotlight mode" width="400px">
+<img src="docs/images/spotlight-mode.png" alt="Spotlight mode">
 
 #### **Deep work**
 
 Like Spotlight, but narrower: dims everything except the line you are writing. The text is not centered and the note title stays. A line is one row as the editor wraps it, so it ends where the text moves to the next row, even mid-sentence.
 
-<img src="docs/images/deep-work-mode.png" alt="Deep work mode" width="400px">
+<img src="docs/images/deep-work-mode.png" alt="Deep work mode">
 
 Notes:
 
@@ -124,12 +124,12 @@ remembered for next time.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/images/paper-theme.png" alt="Paper theme" width="400px"><br><sub>Paper</sub></td>
-    <td align="center"><img src="docs/images/sepia-theme.png" alt="Sepia theme" width="400px"><br><sub>Sepia</sub></td>
+    <td align="center"><img src="docs/images/paper-theme.png" alt="Paper theme" width="600px"><br><sub>Paper</sub></td>
+    <td align="center"><img src="docs/images/sepia-theme.png" alt="Sepia theme" width="600px"><br><sub>Sepia</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/images/dark-theme.png" alt="Dark theme" width="400px"><br><sub>Dark</sub></td>
-    <td align="center"><img src="docs/images/night-theme.png" alt="Night theme" width="400px"><br><sub>Night</sub></td>
+    <td align="center"><img src="docs/images/dark-theme.png" alt="Dark theme" width="600px"><br><sub>Dark</sub></td>
+    <td align="center"><img src="docs/images/night-theme.png" alt="Night theme" width="600px"><br><sub>Night</sub></td>
   </tr>
 </table>
 
@@ -143,7 +143,7 @@ Notes:
 
 ### Dock menu
 
-<img src="docs/images/dock-menu.png" alt="Dock menu" width="500px">
+<img src="docs/images/dock-menu.png" alt="Dock menu">
 
 A small bar at the bottom center of the screen, like the macOS Dock. It shows
 for 3 seconds when focus mode turns on, then hides. Move the pointer to the
