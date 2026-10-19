@@ -26,7 +26,9 @@ If this plugin helps your writing, you can support its development
 
 Requires Obsidian ≥1.10.0.
 
-Download `main.js`, `manifest.json`, and `styles.css` from the
+You can install it from the
+[community plugins page](https://community.obsidian.md/plugins/scribe-of-lagash-focus),
+or download `main.js`, `manifest.json`, and `styles.css` from the
 [latest release](https://github.com/aescanes/scribe-of-lagash-focus/releases/latest)
 and copy them into `<vault>/.obsidian/plugins/scribe-of-lagash-focus/`.
 
