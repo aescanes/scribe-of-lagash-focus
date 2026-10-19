@@ -71,7 +71,8 @@ tooling and the `(SL) ` prefix for generated files.
   - `dockVisibility` — `dockReduce`, the state machine behind the dock's
     3-second show/hide (held open by the pointer, focus or an open menu).
   - `keySound` — `keySoundFor` (which key press gets which sound) and
-    `pickVariant` (which recording) — and `keySoundData`, the generated,
+    `pickVariant` (which recording), and the volume steps (`stepKeyVolume`,
+    `keyVolumeGain`) — and `keySoundData`, the generated,
     embedded samples (checked only for shape by its test).
   - Rule of thumb: a file with no Obsidian, DOM or CodeMirror imports belongs
     here; anything that touches them belongs in `views/`.
@@ -92,7 +93,8 @@ tooling and the `(SL) ` prefix for generated files.
 - [`src/views/hotkeyPrompt.ts`](src/views/hotkeyPrompt.ts) — the first-run
   hotkey prompt and the helper that opens Obsidian's Hotkeys screen.
 - [`src/settings/settings.ts`](src/settings/settings.ts) — persisted appearance
-  (`fontSize`, `fontFamily`, `theme`), `mode`, `keySounds`, `hotkeyPrompted`, and
+  (`fontSize`, `fontFamily`, `theme`), `mode`, `keySounds`, `keySoundVolume`,
+  `hotkeyPrompted`, and
   `normalizeSettings`.
 - [`styles.css`](styles.css) — prefer Obsidian's own CSS variables. Plugin
   classes are prefixed `.scribe-`. The magenta brand accent is defined once as

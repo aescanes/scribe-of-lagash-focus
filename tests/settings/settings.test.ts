@@ -23,6 +23,7 @@ test("valid stored values are kept", () => {
 		hotkeyPrompted: false,
 		mode: DEFAULT_SETTINGS.mode,
 		keySounds: false,
+		keySoundVolume: DEFAULT_SETTINGS.keySoundVolume,
 	});
 });
 
@@ -36,4 +37,10 @@ test("keySounds is kept only when it is exactly true", () => {
 	assert.equal(normalizeSettings({ keySounds: true }).keySounds, true);
 	assert.equal(normalizeSettings({ keySounds: "on" }).keySounds, false);
 	assert.equal(DEFAULT_SETTINGS.keySounds, false);
+});
+
+test("keySoundVolume is clamped, and junk falls back to the default", () => {
+	assert.equal(normalizeSettings({ keySoundVolume: 3 }).keySoundVolume, 3);
+	assert.equal(normalizeSettings({ keySoundVolume: 70 }).keySoundVolume, 5);
+	assert.equal(normalizeSettings({ keySoundVolume: "loud" }).keySoundVolume, DEFAULT_SETTINGS.keySoundVolume);
 });

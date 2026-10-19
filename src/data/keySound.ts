@@ -8,6 +8,28 @@ export type KeySoundKind = "key" | "space" | "enter" | "backspace";
 
 export const KEY_SOUND_KINDS: readonly KeySoundKind[] = ["key", "space", "enter", "backspace"];
 
+/** Key sound volume as the writer sees it: a few big steps, so each click is clearly audible. */
+export const KEY_VOLUME = { min: 1, max: 5, step: 1, default: 2 } as const;
+
+/** Rounds to a whole step and clamps to the range; anything non-numeric becomes the default. */
+export function clampKeyVolume(value: unknown): number {
+	if (typeof value !== "number" || !Number.isFinite(value)) return KEY_VOLUME.default;
+	return Math.min(KEY_VOLUME.max, Math.max(KEY_VOLUME.min, Math.round(value)));
+}
+
+/** One step louder (`1`) or quieter (`-1`), staying inside the range. */
+export function stepKeyVolume(level: number, direction: 1 | -1): number {
+	return clampKeyVolume(level + direction * KEY_VOLUME.step);
+}
+
+/** The gain at the loudest step. The samples are already normalized, so even this is plenty loud. */
+const MAX_GAIN = 0.5;
+
+/** The playback gain for a level, in equal steps from near silence up to `MAX_GAIN`; the default step is 0.2. */
+export function keyVolumeGain(level: number): number {
+	return (clampKeyVolume(level) / KEY_VOLUME.max) * MAX_GAIN;
+}
+
 /**
  * Which of `count` recordings to play: random, but never `last`, so two presses
  * in a row differ. `random` returns a number in [0, 1), like `Math.random`.

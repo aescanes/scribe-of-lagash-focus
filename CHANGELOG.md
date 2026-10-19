@@ -6,6 +6,9 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- Key sound volume: two buttons in the dock, next to the Key sounds switch, make the
+  sounds quieter or louder in five steps (disabled while the sounds are off; the
+  level is remembered).
 - Key sounds: a switch in the dock (off by default, remembered) plays a recorded
   mechanical keyboard as you type in focus mode, with twelve normal keys and
   separate sounds for space, Enter and Backspace.

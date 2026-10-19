@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { KeyPress, keySoundFor, pickVariant } from "../../src/data/keySound";
+import { clampKeyVolume, KEY_VOLUME, KeyPress, keySoundFor, keyVolumeGain, pickVariant, stepKeyVolume } from "../../src/data/keySound";
 
 function press(key: string, extra: Partial<KeyPress> = {}): KeyPress {
 	return { key, ctrlKey: false, metaKey: false, altKey: false, isComposing: false, repeat: false, ...extra };
@@ -50,4 +50,27 @@ test("pickVariant stays in range and never repeats the last one", () => {
 test("pickVariant with one recording always picks it, and with no history uses the roll", () => {
 	assert.equal(pickVariant(1, 0, () => 0.9), 0);
 	assert.equal(pickVariant(4, undefined, () => 0.5), 2);
+});
+
+test("clampKeyVolume rounds, clamps, and defaults on junk", () => {
+	assert.equal(clampKeyVolume(3.6), 4);
+	assert.equal(clampKeyVolume(0), KEY_VOLUME.min);
+	assert.equal(clampKeyVolume(99), KEY_VOLUME.max);
+	assert.equal(clampKeyVolume("5"), KEY_VOLUME.default);
+	assert.equal(clampKeyVolume(NaN), KEY_VOLUME.default);
+});
+
+test("stepKeyVolume moves one step and stops at the ends", () => {
+	assert.equal(stepKeyVolume(4, 1), 5);
+	assert.equal(stepKeyVolume(4, -1), 3);
+	assert.equal(stepKeyVolume(KEY_VOLUME.max, 1), KEY_VOLUME.max);
+	assert.equal(stepKeyVolume(KEY_VOLUME.min, -1), KEY_VOLUME.min);
+});
+
+test("keyVolumeGain runs from quiet to full and is always audible", () => {
+	assert.equal(keyVolumeGain(KEY_VOLUME.max), 0.5);
+	assert.ok(Math.abs(keyVolumeGain(KEY_VOLUME.default) - 0.2) < 1e-9);
+	assert.ok(keyVolumeGain(KEY_VOLUME.min) > 0);
+	assert.ok(keyVolumeGain(5) > keyVolumeGain(4));
+	assert.equal(keyVolumeGain(NaN), keyVolumeGain(KEY_VOLUME.default));
 });

@@ -4,17 +4,19 @@
 import { Component, setIcon } from "obsidian";
 import { DOCK_HIDE_DELAY_MS, dockReduce, DockEvent, DockState, INITIAL_DOCK_STATE } from "../data/dockVisibility";
 import { FocusModeId, FOCUS_MODES } from "../data/focusMode";
+import { KEY_VOLUME } from "../data/keySound";
 import { FocusAppearance, FONT_SIZE, FontId, FontOption, THEMES, ThemeId } from "../data/focusAppearance";
 import { DockMenu, DockMenuHandle } from "./dockMenu";
 
 /** Lucide icon per focus mode, for the menu and its trigger. */
 /** What the info panel's miniature dock shows for each control, and its one-line explanation. */
-const DOCK_GUIDE: readonly { lead: "mode" | "font" | "size" | "theme" | "sounds" | "info"; label: string; text: string }[] = [
+const DOCK_GUIDE: readonly { lead: "mode" | "font" | "size" | "theme" | "sounds" | "volume" | "info"; label: string; text: string }[] = [
 	{ lead: "mode", label: "Focus mode", text: "How the page is dimmed or centered." },
 	{ lead: "font", label: "Font", text: "The typeface of your text." },
 	{ lead: "size", label: "A\u2212 A+", text: "Make the text smaller or larger." },
 	{ lead: "theme", label: "Theme", text: "The color of the page." },
 	{ lead: "sounds", label: "Key sounds", text: "A mechanical key click as you type." },
+	{ lead: "volume", label: "", text: "Make key sounds quieter or louder." },
 	{ lead: "info", label: "", text: "Dock info." },
 ];
 
@@ -32,9 +34,16 @@ const MODE_ICONS: Record<FocusModeId, string> = {
 	"deep-work": "target",
 };
 
+/** The key sound switch and volume step, as the dock shows them. */
+export interface KeySoundState {
+	on: boolean;
+	volume: number;
+}
+
 export interface FocusDockHandlers {
 	setMode(id: FocusModeId): void;
 	setKeySounds(on: boolean): void;
+	changeKeySoundVolume(direction: 1 | -1): void;
 	changeFontSize(direction: 1 | -1): void;
 	setFont(id: FontId): void;
 	setTheme(id: ThemeId): void;
@@ -56,6 +65,8 @@ export class FocusDock extends Component {
 	private largerEl: HTMLButtonElement | null = null;
 	private modeMenu: DockMenu<FocusModeId> | null = null;
 	private soundsEl: HTMLButtonElement | null = null;
+	private quieterEl: HTMLButtonElement | null = null;
+	private louderEl: HTMLButtonElement | null = null;
 	private infoButtonEl: HTMLButtonElement | null = null;
 	/** Where the pointer last was, for telling whether it is still over the dock once a menu has gone. */
 	private pointerTarget: Node | null = null;
@@ -68,7 +79,7 @@ export class FocusDock extends Component {
 		private appearance: FocusAppearance,
 		private mode: FocusModeId,
 		private readonly fonts: readonly FontOption[],
-		private keySounds: boolean,
+		private keySounds: KeySoundState,
 	) {
 		super();
 	}
@@ -91,6 +102,7 @@ export class FocusDock extends Component {
 		this.buildThemeMenu(dock);
 		dock.createDiv({ cls: "scribe-focus-dock-divider" });
 		this.buildSoundsToggle(dock);
+		this.buildVolumeGroup(dock);
 		dock.createDiv({ cls: "scribe-focus-dock-divider" });
 		this.buildInfoButton(dock);
 
@@ -156,7 +168,7 @@ export class FocusDock extends Component {
 	}
 
 	/** Reflects a new appearance in the dock's own controls. */
-	update(appearance: FocusAppearance, mode: FocusModeId, keySounds: boolean): void {
+	update(appearance: FocusAppearance, mode: FocusModeId, keySounds: KeySoundState): void {
 		this.appearance = appearance;
 		this.mode = mode;
 		this.keySounds = keySounds;
@@ -210,7 +222,7 @@ export class FocusDock extends Component {
 		const el = dock.createEl("button", { cls: "scribe-focus-dock-toggle" });
 		this.soundsEl = el;
 		this.registerDomEvent(el, "click", () => {
-			this.handlers.setKeySounds(!this.keySounds);
+			this.handlers.setKeySounds(!this.keySounds.on);
 		});
 		this.renderSounds();
 	}
@@ -219,11 +231,32 @@ export class FocusDock extends Component {
 		const el = this.soundsEl;
 		if (!el) return;
 		el.empty();
-		el.toggleClass("is-on", this.keySounds);
-		el.setAttr("aria-pressed", String(this.keySounds));
-		setIcon(el.createSpan({ cls: "scribe-focus-dock-lead" }), this.keySounds ? "volume-2" : "volume-x");
+		const { on, volume } = this.keySounds;
+		el.toggleClass("is-on", on);
+		el.setAttr("aria-pressed", String(on));
+		setIcon(el.createSpan({ cls: "scribe-focus-dock-lead" }), on ? "volume-2" : "volume-x");
 		el.createSpan({ text: "Key sounds" });
-		el.createSpan({ cls: "scribe-focus-dock-toggle-state", text: this.keySounds ? "On" : "Off" });
+		el.createSpan({ cls: "scribe-focus-dock-toggle-state", text: on ? "On" : "Off" });
+		// Nothing to turn up or down while the sounds are off.
+		if (this.quieterEl) this.quieterEl.disabled = !on || volume <= KEY_VOLUME.min;
+		if (this.louderEl) this.louderEl.disabled = !on || volume >= KEY_VOLUME.max;
+		this.quieterEl?.setAttr("title", `Quieter key sounds (volume ${volume} of ${KEY_VOLUME.max})`);
+		this.louderEl?.setAttr("title", `Louder key sounds (volume ${volume} of ${KEY_VOLUME.max})`);
+	}
+
+	private buildVolumeGroup(dock: HTMLElement): void {
+		const group = dock.createDiv({ cls: "scribe-focus-dock-group" });
+		this.quieterEl = this.volumeButton(group, "volume-1", "Quieter key sounds", -1);
+		this.louderEl = this.volumeButton(group, "volume-2", "Louder key sounds", 1);
+		this.renderSounds();
+	}
+
+	private volumeButton(parent: HTMLElement, icon: string, label: string, direction: 1 | -1): HTMLButtonElement {
+		const el = parent.createEl("button", { cls: "scribe-focus-dock-size" });
+		el.setAttr("aria-label", label);
+		setIcon(el, icon);
+		this.registerDomEvent(el, "click", () => this.handlers.changeKeySoundVolume(direction));
+		return el;
 	}
 
 	private buildFontMenu(dock: HTMLElement): void {
@@ -326,11 +359,12 @@ export class FocusDock extends Component {
 			else if (part.lead === "font") lead.createSpan({ cls: "scribe-focus-dock-font", text: "Aa" });
 			else if (part.lead === "theme") lead.createSpan({ cls: "scribe-focus-dock-swatch" });
 			else if (part.lead === "sounds") setIcon(lead, "volume-x");
+			else if (part.lead === "volume") setIcon(lead, "volume-1");
 			else if (part.lead === "info") setIcon(lead, "info");
 			if (part.label) item.createSpan({ text: part.label });
 			item.createSpan({ cls: "scribe-focus-info-badge", text: String(i + 1) });
 
-			const row = columns[i < 3 ? 0 : 1].createDiv({ cls: "scribe-focus-info-list-row" });
+			const row = columns[i < Math.ceil(DOCK_GUIDE.length / 2) ? 0 : 1].createDiv({ cls: "scribe-focus-info-list-row" });
 			row.createSpan({ cls: "scribe-focus-info-badge", text: String(i + 1) });
 			row.createSpan({ text: part.text });
 		});

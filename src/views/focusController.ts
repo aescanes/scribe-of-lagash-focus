@@ -11,10 +11,10 @@ import {
 	stepFontSize,
 	ThemeId,
 } from "../data/focusAppearance";
-import { keySoundFor } from "../data/keySound";
+import { keySoundFor, keyVolumeGain, stepKeyVolume } from "../data/keySound";
 import { FocusModeId, focusBodyClasses, getFocusMode } from "../data/focusMode";
 import { ScribeFocusModeSettings } from "../settings/settings";
-import { FocusDock } from "./focusDock";
+import { FocusDock, KeySoundState } from "./focusDock";
 import { FocusEditorEngine } from "./focusEditor";
 import { isFontInstalled } from "./fontDetector";
 import { KeySoundPlayer } from "./keySoundPlayer";
@@ -92,7 +92,7 @@ export class FocusController extends Component {
 		if (enabled) this.fonts = availableFonts(isFontInstalled);
 		this.refresh();
 		if (enabled) {
-			this.dock = this.addChild(new FocusDock(this.dockHandlers(), this.appearance(), this.getSettings().mode, this.fonts, this.getSettings().keySounds));
+			this.dock = this.addChild(new FocusDock(this.dockHandlers(), this.appearance(), this.getSettings().mode, this.fonts, this.keySoundState()));
 			this.dock.show();
 			void this.enterFullscreen();
 		} else {
@@ -145,9 +145,14 @@ export class FocusController extends Component {
 		if (this.enabled) this.applyClasses();
 		const { dim, typewriterScroll } = getFocusMode(this.getSettings().mode).characteristics;
 		this.editor.set(this.enabled, this.enabled ? dim : "none", this.enabled && typewriterScroll);
-		this.dock?.update(this.appearance(), this.getSettings().mode, this.getSettings().keySounds);
+		this.dock?.update(this.appearance(), this.getSettings().mode, this.keySoundState());
 		// Decoded ahead of the first key press, so that press is not silent.
 		if (this.enabled && this.getSettings().keySounds) void this.sounds.load();
+	}
+
+	private keySoundState(): KeySoundState {
+		const { keySounds, keySoundVolume } = this.getSettings();
+		return { on: keySounds, volume: keySoundVolume };
 	}
 
 	private dockHandlers() {
@@ -156,6 +161,11 @@ export class FocusController extends Component {
 				this.change({ fontSize: stepFontSize(this.getSettings().fontSize, direction) }),
 			setMode: (mode: FocusModeId) => this.change({ mode }),
 			setKeySounds: (keySounds: boolean) => this.change({ keySounds }),
+			changeKeySoundVolume: (direction: 1 | -1) => {
+				this.change({ keySoundVolume: stepKeyVolume(this.getSettings().keySoundVolume, direction) });
+				// Let the writer hear the new level.
+				this.sounds.play("key", keyVolumeGain(this.getSettings().keySoundVolume));
+			},
 			setFont: (fontFamily: FontId) => this.change({ fontFamily }),
 			setTheme: (theme: ThemeId) => this.change({ theme }),
 		};
@@ -196,7 +206,7 @@ export class FocusController extends Component {
 		if (!this.enabled || !this.getSettings().keySounds) return;
 		if (!(evt.target instanceof Element) || !evt.target.closest(".cm-content")) return;
 		const kind = keySoundFor(evt);
-		if (kind) this.sounds.play(kind);
+		if (kind) this.sounds.play(kind, keyVolumeGain(this.getSettings().keySoundVolume));
 	}
 
 	private applyClasses(): void {

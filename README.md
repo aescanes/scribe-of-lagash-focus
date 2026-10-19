@@ -126,6 +126,9 @@ It changes the note instantly and remembers your choices:
   instead, and your choice returns where the font exists.
 - **Theme** — Paper, Sepia, Dark or Night.
 - **Key sounds** — on or off (off by default, and remembered). See below.
+- **Key sound volume** — two speaker buttons next to Key sounds make the sounds
+  quieter or louder, in five clear steps. They are disabled while key sounds are off,
+  and each press plays a click at the new level. The level is remembered.
 - **Info** — the `i` button at the right end opens a large, centered panel with
   a miniature of the dock and a one-line explanation of each control, then the
   dock shortcuts (`Shift` + `Up arrow` or moving the mouse to the bottom edge shows the

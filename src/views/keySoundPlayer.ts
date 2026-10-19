@@ -5,11 +5,9 @@ import { KEY_SOUND_KINDS, KeySoundKind, pickVariant } from "../data/keySound";
 import { KEY_SOUND_DATA } from "../data/keySoundData";
 
 /**
- * Overall loudness, and the balance between kinds. The samples are already
- * levelled per kind (normal keys quietest, space loudest); this is what to turn
- * down if the sounds are too much.
+ * The balance between kinds. The samples are already levelled per kind (normal
+ * keys quietest, space loudest); overall loudness is the writer's volume step.
  */
-const MASTER_VOLUME = 0.2;
 const KIND_VOLUME: Record<KeySoundKind, number> = { key: 1, space: 1, enter: 1, backspace: 1 };
 
 /** Each press varies a little in pitch and loudness, so it never sounds like one looped clip. */
@@ -42,7 +40,8 @@ export class KeySoundPlayer {
 		return this.loading;
 	}
 
-	play(kind: KeySoundKind): void {
+	/** `volume` is the gain from `keyVolumeGain`. */
+	play(kind: KeySoundKind, volume: number): void {
 		const variants = this.buffers.get(kind);
 		const context = this.context;
 		if (!variants || variants.length === 0 || !context) {
@@ -58,7 +57,7 @@ export class KeySoundPlayer {
 		source.buffer = variants[variant];
 		source.playbackRate.value = 1 - PITCH_SPREAD / 2 + Math.random() * PITCH_SPREAD;
 		const gain = context.createGain();
-		gain.gain.value = MASTER_VOLUME * KIND_VOLUME[kind] * (1 - Math.random() * VOLUME_SPREAD);
+		gain.gain.value = volume * KIND_VOLUME[kind] * (1 - Math.random() * VOLUME_SPREAD);
 		source.connect(gain).connect(context.destination);
 		source.start();
 	}

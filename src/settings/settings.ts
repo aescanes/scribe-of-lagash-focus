@@ -3,6 +3,7 @@
 
 import { DEFAULT_APPEARANCE, FocusAppearance, normalizeAppearance } from "../data/focusAppearance";
 import { DEFAULT_FOCUS_MODE, FocusModeId, isFocusModeId } from "../data/focusMode";
+import { clampKeyVolume, KEY_VOLUME } from "../data/keySound";
 
 /**
  * Persisted state. There is no settings tab: the appearance options live in
@@ -20,6 +21,8 @@ export interface ScribeFocusModeSettings extends FocusAppearance {
 	mode: FocusModeId;
 	/** Key sounds are on while typing in focus mode. */
 	keySounds: boolean;
+	/** Key sound volume, a whole step from `KEY_VOLUME.min` to `KEY_VOLUME.max`. */
+	keySoundVolume: number;
 }
 
 export const DEFAULT_SETTINGS: ScribeFocusModeSettings = {
@@ -27,6 +30,7 @@ export const DEFAULT_SETTINGS: ScribeFocusModeSettings = {
 	hotkeyPrompted: false,
 	mode: DEFAULT_FOCUS_MODE,
 	keySounds: false,
+	keySoundVolume: KEY_VOLUME.default,
 };
 
 /**
@@ -42,5 +46,6 @@ export function normalizeSettings(stored: unknown): ScribeFocusModeSettings {
 		hotkeyPrompted: record?.hotkeyPrompted === true,
 		mode: isFocusModeId(record?.mode) ? record.mode : DEFAULT_FOCUS_MODE,
 		keySounds: record?.keySounds === true,
+		keySoundVolume: clampKeyVolume(record?.keySoundVolume),
 	};
 }
