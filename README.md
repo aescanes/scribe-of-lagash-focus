@@ -9,6 +9,8 @@ focus modes. It is part
 of the **Scribe of Lagash** series, a set of independent, focused tools for
 planning and writing stories in Obsidian.
 
+<img src="docs/images/typewriter-mode.png" alt="Focus mode">
+
 ## Thank you
 
 If this plugin helps your writing, you can support its development
@@ -37,11 +39,10 @@ plugins for planning and writing stories:
   helps writers visualize their chapters and scenes.
 - **[Scribe of Lagash - Goals and Stats](https://community.obsidian.md/plugins/scribe-of-lagash-goals-stats)** ([github repository](https://github.com/aescanes/scribe-of-lagash-goals-stats)) —
   helps writers set goals and see detailed statistics for their story.
-- **[Scribe of Lagash - Focus](https://github.com/aescanes/scribe-of-lagash-focus)** —
+- **[Scribe of Lagash - Focus](https://community.obsidian.md/plugins/scribe-of-lagash-focus)** ([github repository](https://github.com/aescanes/scribe-of-lagash-focus)) —
   helps writers focus on their work and remove distractions.
 
-Each plugin works fine on its own and none requires another. Visualization
-and Goals and Stats each have a **Story folder** setting; Focus Mode has no
+Each plugin works fine on its own, and none requires another, but they work better together. Visualization and Goals and Stats each have a **Story folder** setting; Focus Mode has no
 scope and applies to the whole vault.
 
 ### About the name
@@ -74,18 +75,101 @@ Pick a mode from the **Focus mode** menu in the dock. Every mode hides the
 interface the same way (see above); they differ in how the text itself is
 shown. Your choice is remembered for next time.
 
-| Mode                           | What it does                                                                                                                                                                                                                                                                                                                                                      |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Distraction-free** (default) | Only the page: nothing is dimmed and the text scrolls normally.                                                                                                                                                                                                                                                                                                   |
-| **Typewriter**                 | Keeps the line you are writing in a box at the middle of the screen, like paper rolling through a typewriter: the text moves past the box and everything outside it is dimmed. Inside the box only the line with the cursor is lit. The note title is hidden, and the page gets extra space above and below so the first and last lines can reach the middle too. |
-| **Spotlight**                  | Dims everything except the paragraph you are writing. A paragraph is the run of lines between blank lines.                                                                                                                                                                                                                                                        |
-| **Deep work**                  | Like Spotlight, but narrower: dims everything except the line you are writing. The text is not centered and the note title stays. A line is one row as the editor wraps it, so it ends where the text moves to the next row, even mid-sentence.                                                                                                                   |
+#### **Distraction-free** (default)
+
+Only the page: nothing is dimmed and the text scrolls normally.
+
+<img src="docs/images/distraction-free-mode.png" alt="Distraction free mode" width="400px">
+
+#### **Typewriter**
+
+Keeps the line you are writing in a box at the middle of the screen, like paper rolling through a typewriter: the text moves past the box and everything outside it is dimmed. Inside the box only the line with the cursor is lit. The note title is hidden, and the page gets extra space above and below so the first and last lines can reach the middle too.
+
+<img src="docs/images/typewriter-mode.png" alt="Typewriter mode" width="400px">
+
+#### **Spotlight**
+
+Dims everything except the paragraph you are writing. A paragraph is the run of lines between blank lines.
+
+<img src="docs/images/spotlight-mode.png" alt="Spotlight mode" width="400px">
+
+#### **Deep work**
+
+Like Spotlight, but narrower: dims everything except the line you are writing. The text is not centered and the note title stays. A line is one row as the editor wraps it, so it ends where the text moves to the next row, even mid-sentence.
+
+<img src="docs/images/deep-work-mode.png" alt="Deep work mode" width="400px">
 
 Notes:
 
 - Typewriter scrolling and dimming follow the cursor, so they apply in the
   editor (Live Preview and Source mode). Reading view is shown undimmed.
 - Dimming only changes how the editor looks. Your note is never edited.
+
+### Themes
+
+Pick a **Theme** from the dock to change the color of the page while focus mode
+is on. Each theme is a background and a text color, applied to the note you are
+writing (editor and Reading view). The dock, the info panel and the Typewriter
+box take on the same colors, so everything looks like one page. Your choice is
+remembered for next time.
+
+| Theme               | Page      | Text      | Feel            |
+| ------------------- | --------- | --------- | --------------- |
+| **Paper** (default) | `#fbf8f1` | `#2b2b2b` | Warm white      |
+| **Sepia**           | `#f4ecd8` | `#5b4636` | Dried clay      |
+| **Dark**            | `#1e1e1e` | `#d4d4d4` | Neutral dark    |
+| **Night**           | `#14161a` | `#9aa0a6` | Dark, low glare |
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/paper-theme.png" alt="Paper theme" width="400px"><br><sub>Paper</sub></td>
+    <td align="center"><img src="docs/images/sepia-theme.png" alt="Sepia theme" width="400px"><br><sub>Sepia</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/dark-theme.png" alt="Dark theme" width="400px"><br><sub>Dark</sub></td>
+    <td align="center"><img src="docs/images/night-theme.png" alt="Night theme" width="400px"><br><sub>Night</sub></td>
+  </tr>
+</table>
+
+Notes:
+
+- Themes only color the body text and the page. Headings and links keep their
+  own colors, code keeps Obsidian's own monospace font, and the cursor takes
+  the text color.
+- They never change your Obsidian theme or any of its colors, and leaving focus
+  mode puts everything back exactly as it was.
+
+### Dock menu
+
+<img src="docs/images/dock-menu.png" alt="Dock menu" width="500px">
+
+A small bar at the bottom center of the screen, like the macOS Dock. It shows
+for 3 seconds when focus mode turns on, then hides. Move the pointer to the
+bottom edge of the window (anywhere along it, not only where the dock is), or press `Shift` + `Up arrow`, to bring it back;
+`Shift` + `Down arrow` hides it right away.
+It changes the note instantly and remembers your choices:
+
+- **Focus mode** — Distraction-free, Typewriter, Spotlight or Deep work (see Focus modes).
+- **Font** — Georgia, Garamond, Baskerville, Palatino, Times New Roman, Courier
+  New or Helvetica, applied to the note's text and title (code keeps its own
+  font). Garamond, Baskerville and Palatino are listed only if they are
+  installed on your computer; the others are always listed. If a saved font is
+  missing (for example after syncing to another computer) Georgia is shown
+  instead, and your choice returns where the font exists.
+- **Text size** — smaller (`A−`) and larger (`A+`).
+- **Theme** — Paper, Sepia, Dark or Night (see Themes above).
+- **Key sounds** — on or off (off by default, and remembered). See below.
+- **Key sound volume** — two speaker buttons next to Key sounds make the sounds
+  quieter or louder, in five clear steps. They are disabled while key sounds are off,
+  and each press plays a click at the new level. The level is remembered.
+- **Info** — the `i` button at the right end opens a large, centered panel with
+  a miniature of the dock and a one-line explanation of each control, then the
+  dock shortcuts (`Shift` + `Up arrow` or moving the mouse to the bottom edge shows the
+  dock, `Shift` + `Down arrow` hides it, `Esc` leaves focus mode). Click anywhere or press
+  `Esc` to close the panel; with the panel open, `Esc` only closes it.
+
+The plugin has no settings tab, never edits your notes, and only changes how
+the editor looks while focus mode is on.
 
 ### Spell check is off in focus mode
 
@@ -107,36 +191,6 @@ Ctrl, Cmd and Alt, shortcuts, held-down keys and keys typed through an input
 method (for example, accents or CJK) are silent. Sounds play only in the note's
 editor, only while focus mode is on, and are embedded in the plugin, so nothing
 is downloaded.
-
-### Appearance dock
-
-A small bar at the bottom center of the screen, like the macOS Dock. It shows
-for 3 seconds when focus mode turns on, then hides. Move the pointer to the
-bottom edge of the window (anywhere along it, not only where the dock is), or press `Shift` + `Up arrow`, to bring it back;
-`Shift` + `Down arrow` hides it right away.
-It changes the note instantly and remembers your choices:
-
-- **Focus mode** — Distraction-free, Typewriter, Spotlight or Deep work (see above).
-- **Text size** — smaller and larger.
-- **Font** — Georgia, Garamond, Baskerville, Palatino, Times New Roman, Courier
-  New or Helvetica, applied to the note's text and title (code keeps its own
-  font). Garamond, Baskerville and Palatino are listed only if they are
-  installed on your computer; the others are always listed. If a saved font is
-  missing (for example after syncing to another computer) Georgia is shown
-  instead, and your choice returns where the font exists.
-- **Theme** — Paper, Sepia, Dark or Night.
-- **Key sounds** — on or off (off by default, and remembered). See below.
-- **Key sound volume** — two speaker buttons next to Key sounds make the sounds
-  quieter or louder, in five clear steps. They are disabled while key sounds are off,
-  and each press plays a click at the new level. The level is remembered.
-- **Info** — the `i` button at the right end opens a large, centered panel with
-  a miniature of the dock and a one-line explanation of each control, then the
-  dock shortcuts (`Shift` + `Up arrow` or moving the mouse to the bottom edge shows the
-  dock, `Shift` + `Down arrow` hides it, `Esc` leaves focus mode). Click anywhere or press
-  `Esc` to close the panel; with the panel open, `Esc` only closes it.
-
-The plugin has no settings tab, never edits your notes, and only changes how
-the editor looks while focus mode is on.
 
 ## Planned next
 
