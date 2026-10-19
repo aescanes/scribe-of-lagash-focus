@@ -5,6 +5,8 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.0](https://github.com/aescanes/scribe-of-lagash-focus/releases/tag/1.0.0) - 2026-10-19
+
 ### Added
 - Key sound volume: two buttons in the dock, next to the Key sounds switch, make the
   sounds quieter or louder in five steps (disabled while the sounds are off; the
