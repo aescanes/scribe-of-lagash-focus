@@ -5,19 +5,19 @@ import { App, Component, MarkdownView, Notice, Platform } from "obsidian";
 import {
 	appearanceBodyClasses,
 	availableFonts,
-	DEFAULT_APPEARANCE,
+	effectiveFontId,
 	FontId,
 	FontOption,
 	stepFontSize,
 	ThemeId,
 } from "../data/focusAppearance";
+import { keySoundFor } from "../data/keySound";
 import { FocusModeId, focusBodyClasses, getFocusMode } from "../data/focusMode";
 import { ScribeFocusModeSettings } from "../settings/settings";
 import { FocusDock } from "./focusDock";
 import { FocusEditorEngine } from "./focusEditor";
 import { isFontInstalled } from "./fontDetector";
 import { KeySoundPlayer } from "./keySoundPlayer";
-import { keySoundFor } from "../data/keySound";
 
 /** CSS custom property that carries the font size; the one value set from code. */
 const FONT_SIZE_PROPERTY = "--scribe-focus-font-size";
@@ -188,8 +188,7 @@ export class FocusController extends Component {
 	 */
 	private appearance(): ScribeFocusModeSettings {
 		const settings = this.getSettings();
-		const installed = this.fonts.some((font) => font.id === settings.fontFamily);
-		return installed ? settings : { ...settings, fontFamily: DEFAULT_APPEARANCE.fontFamily };
+		return { ...settings, fontFamily: effectiveFontId(settings.fontFamily, this.fonts) };
 	}
 
 	/** Typing in the note's editor clicks, while focus mode and key sounds are both on. */

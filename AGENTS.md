@@ -46,7 +46,9 @@ Rules:
 The focus view (hide the interface) and the appearance dock are built and
 confirmed in Obsidian — see "Verification" in
 [`docs/feature-plans/focus-view-and-dock-plan.md`](docs/feature-plans/focus-view-and-dock-plan.md).
-Typewriter scrolling and paragraph/line dimming are planned in
+The four focus modes (distraction-free, typewriter, spotlight, deep work), key
+sounds, the info panel and font detection are built too, but not all of them are
+confirmed in Obsidian yet — see
 [`docs/feature-plans/focus-modes-plan.md`](docs/feature-plans/focus-modes-plan.md).
 Update this file and the plans as features land.
 
@@ -57,27 +59,41 @@ plugins (Visualization and Goals and Stats): the same build/test/release
 tooling and the `(SL) ` prefix for generated files.
 
 - Entry point: [`src/main.ts`](src/main.ts) → `ScribeFocusModePlugin` — onload
-  wiring only: loads settings, creates the `FocusController`, adds the
-  left-ribbon icon and the "Focus mode" command, and merges and saves
-  appearance changes from the dock.
+  wiring only: loads settings, registers the editor extension, creates the
+  `FocusController`, adds the left-ribbon icon and the "Focus mode" command, and
+  merges and saves dock changes.
 - [`src/data/`](src/data/) — **pure, no Obsidian imports**, unit-tested:
   - `focusMode` — the `FOCUS_MODES` table, `FocusCharacteristics`, and
-    `focusBodyClasses` (the mode → `<body>` class contract). v1 always uses the
-    default (distraction-free) mode.
-  - `focusAppearance` — the fonts, themes, font-size range, `normalizeAppearance`,
-    `stepFontSize`, and `appearanceBodyClasses`.
+    `focusBodyClasses` (the mode → `<body>` class contract).
+  - `focusAppearance` — the fonts (`availableFonts`, `effectiveFontId`), themes,
+    font-size range, `normalizeAppearance`, `stepFontSize`, and
+    `appearanceBodyClasses`.
   - `dockVisibility` — `dockReduce`, the state machine behind the dock's
-    3-second show/hide.
+    3-second show/hide (held open by the pointer, focus or an open menu).
+  - `keySound` — `keySoundFor` (which key press gets which sound) and
+    `pickVariant` (which recording) — and `keySoundData`, the generated,
+    embedded samples (checked only for shape by its test).
+  - Rule of thumb: a file with no Obsidian, DOM or CodeMirror imports belongs
+    here; anything that touches them belongs in `views/`.
 - [`src/views/focusController.ts`](src/views/focusController.ts) — owns the
   on/off state, applies and clears the body classes and the font-size variable,
-  creates and removes the dock, and handles `Esc` and `Shift` + `Up`/`Down arrow`.
+  creates and removes the dock, drives the editor engine and key sounds, and
+  handles `Esc` and `Shift` + `Up`/`Down arrow`.
 - [`src/views/focusDock.ts`](src/views/focusDock.ts) — the bottom-center dock
-  and its hot zone; turns DOM events into `dockReduce` events and runs the one
-  hide timer.
+  and its hot zone (the whole bottom edge); turns DOM events into `dockReduce`
+  events, runs the one hide timer, and builds the info panel.
+- [`src/views/dockMenu.ts`](src/views/dockMenu.ts) — one dropdown of the dock.
+- [`src/views/focusEditor.ts`](src/views/focusEditor.ts) — the CodeMirror 6
+  extension: dimming, typewriter scrolling and spell check off.
+- [`src/views/keySoundPlayer.ts`](src/views/keySoundPlayer.ts) — plays the key
+  sounds with the Web Audio API.
+- [`src/views/fontDetector.ts`](src/views/fontDetector.ts) — checks which fonts
+  are installed (canvas width test).
 - [`src/views/hotkeyPrompt.ts`](src/views/hotkeyPrompt.ts) — the first-run
   hotkey prompt and the helper that opens Obsidian's Hotkeys screen.
 - [`src/settings/settings.ts`](src/settings/settings.ts) — persisted appearance
-  (`fontSize`, `fontFamily`, `theme`), `hotkeyPrompted`, and `normalizeSettings`.
+  (`fontSize`, `fontFamily`, `theme`), `mode`, `keySounds`, `hotkeyPrompted`, and
+  `normalizeSettings`.
 - [`styles.css`](styles.css) — prefer Obsidian's own CSS variables. Plugin
   classes are prefixed `.scribe-`. The magenta brand accent is defined once as
   `--scribe-accent` / `--scribe-accent-soft`; never introduce another raw hex

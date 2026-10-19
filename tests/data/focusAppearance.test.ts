@@ -6,6 +6,7 @@ import { test } from "node:test";
 import {
 	appearanceBodyClasses,
 	availableFonts,
+	effectiveFontId,
 	clampFontSize,
 	DEFAULT_APPEARANCE,
 	FONT_SIZE,
@@ -68,4 +69,11 @@ test("fonts with a probe are offered only when one of its families is installed"
 
 test("the default font is always available", () => {
 	assert.ok(availableFonts(() => false).some((f) => f.id === DEFAULT_APPEARANCE.fontFamily));
+});
+
+test("a saved font that is not offered is shown as the default, one that is offered is kept", () => {
+	const offered = availableFonts(() => false);
+	assert.equal(effectiveFontId("garamond", offered), DEFAULT_APPEARANCE.fontFamily);
+	assert.equal(effectiveFontId("courier-new", offered), "courier-new");
+	assert.equal(effectiveFontId("garamond", availableFonts(() => true)), "garamond");
 });

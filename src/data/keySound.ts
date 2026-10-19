@@ -8,6 +8,16 @@ export type KeySoundKind = "key" | "space" | "enter" | "backspace";
 
 export const KEY_SOUND_KINDS: readonly KeySoundKind[] = ["key", "space", "enter", "backspace"];
 
+/**
+ * Which of `count` recordings to play: random, but never `last`, so two presses
+ * in a row differ. `random` returns a number in [0, 1), like `Math.random`.
+ */
+export function pickVariant(count: number, last: number | undefined, random: () => number): number {
+	const index = Math.floor(random() * count);
+	if (count > 1 && index === last) return (index + 1 + Math.floor(random() * (count - 1))) % count;
+	return index;
+}
+
 /** The parts of a `KeyboardEvent` this reads, so it can be tested without a DOM. */
 export interface KeyPress {
 	key: string;

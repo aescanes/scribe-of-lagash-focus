@@ -77,6 +77,11 @@ export function availableFonts(isInstalled: (family: string) => boolean): FontOp
 	return FONTS.filter((font) => !font.probe || font.probe.some(isInstalled));
 }
 
+/** The font to show: `saved` if it is on offer, otherwise the default (the saved choice itself is never changed). */
+export function effectiveFontId(saved: FontId, offered: readonly FontOption[]): FontId {
+	return offered.some((font) => font.id === saved) ? saved : DEFAULT_APPEARANCE.fontFamily;
+}
+
 export function isFontId(value: unknown): value is FontId {
 	return FONTS.some((font) => font.id === value);
 }

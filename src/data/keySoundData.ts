@@ -3,22 +3,25 @@
 
 // Generated data — the key sounds, embedded so the plugin needs no extra files
 // (a community release ships only main.js, manifest.json and styles.css). They
-// are cut from the maintainer's own recording, assets/sounds/keys.m4a (random
-// keys pressed slowly, then space twice, Enter twice and Backspace twice): each
-// press is 0.2 s (the key going down and coming back up), as a mono MP3 of
-// about 3 KB. There are twelve different normal keys, and two each of space,
-// Enter and Backspace, so repeats do not sound alike.
-// To rebuild: convert the recording to mono 44.1 kHz WAV and, for each press,
+// are cut from the maintainer's own recording of their keyboard (random keys
+// pressed slowly, then space twice, Enter twice and Backspace twice), which is
+// not kept in the repository: each press is 0.2 s (the key going down and
+// coming back up), as a mono MP3 of about 3 KB. There are twelve different
+// normal keys, and two each of space, Enter and Backspace, so repeats do not
+// sound alike.
+// To make new ones, record the same way, convert it to mono 44.1 kHz WAV and,
+// for each press,
 //   ffmpeg -i keys.wav -ss <press start - 0.008> -t 0.2 cut.wav
 // then, with one gain per kind that brings its average peak to -14 dB (key),
 // -9 dB (space) or -10 dB (Enter, Backspace):
 //   ffmpeg -i cut.wav -af "volume=<gain>dB,afade=t=in:d=0.002,afade=t=out:st=0.15:d=0.05" \
 //     -ac 1 -c:a libmp3lame -q:a 4 out.mp3
-// and paste each file's base64 below. Press starts, in seconds: key 0.954,
-// 1.542, 2.256, 3.016, 4.384, 5.048, 6.522, 7.892, 9.280, 10.092, 12.264,
-// 13.654; space 15.372, 15.764; Enter 17.070, 17.818; Backspace 18.994, 19.786.
+// and paste each file's base64 below. (For the sounds here, the press starts
+// were, in seconds: key 0.954, 1.542, 2.256, 3.016, 4.384, 5.048, 6.522, 7.892,
+// 9.280, 10.092, 12.264, 13.654; space 15.372, 15.764; Enter 17.070, 17.818;
+// Backspace 18.994, 19.786.)
 
-import type { KeySoundKind } from "../data/keySound";
+import type { KeySoundKind } from "./keySound";
 
 export const KEY_SOUND_DATA: Record<KeySoundKind, string[]> = {
 	key: [

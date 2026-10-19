@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 // Copyright (C) 2026 aescanes
 
-import { KEY_SOUND_KINDS, KeySoundKind } from "../data/keySound";
-import { KEY_SOUND_DATA } from "./keySoundData";
+import { KEY_SOUND_KINDS, KeySoundKind, pickVariant } from "../data/keySound";
+import { KEY_SOUND_DATA } from "../data/keySoundData";
 
 /**
  * Overall loudness, and the balance between kinds. The samples are already
  * levelled per kind (normal keys quietest, space loudest); this is what to turn
  * down if the sounds are too much.
  */
-const MASTER_VOLUME = 0.1;
+const MASTER_VOLUME = 0.2;
 const KIND_VOLUME: Record<KeySoundKind, number> = { key: 1, space: 1, enter: 1, backspace: 1 };
 
 /** Each press varies a little in pitch and loudness, so it never sounds like one looped clip. */
@@ -53,7 +53,9 @@ export class KeySoundPlayer {
 		if (context.state === "suspended") void context.resume();
 
 		const source = context.createBufferSource();
-		source.buffer = variants[this.pickVariant(kind, variants.length)];
+		const variant = pickVariant(variants.length, this.lastPlayed.get(kind), Math.random);
+		this.lastPlayed.set(kind, variant);
+		source.buffer = variants[variant];
 		source.playbackRate.value = 1 - PITCH_SPREAD / 2 + Math.random() * PITCH_SPREAD;
 		const gain = context.createGain();
 		gain.gain.value = MASTER_VOLUME * KIND_VOLUME[kind] * (1 - Math.random() * VOLUME_SPREAD);
@@ -67,15 +69,6 @@ export class KeySoundPlayer {
 		this.buffers.clear();
 		this.lastPlayed.clear();
 		this.loading = null;
-	}
-
-	/** A random variant that is not the one used last, so two presses in a row differ. */
-	private pickVariant(kind: KeySoundKind, count: number): number {
-		const last = this.lastPlayed.get(kind);
-		let index = Math.floor(Math.random() * count);
-		if (count > 1 && index === last) index = (index + 1 + Math.floor(Math.random() * (count - 1))) % count;
-		this.lastPlayed.set(kind, index);
-		return index;
 	}
 
 	private async decodeAll(): Promise<void> {
