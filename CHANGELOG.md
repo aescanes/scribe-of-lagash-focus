@@ -5,6 +5,10 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Settings: a "Support" section with a Ko-fi button for readers who want to
+  support the plugin's development.
+
 ## [1.0.1](https://github.com/aescanes/scribe-of-lagash-focus/releases/tag/1.0.1) - 2026-10-19
 
 ### Changed

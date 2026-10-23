@@ -6,6 +6,7 @@ import { DEFAULT_SETTINGS, normalizeSettings, ScribeFocusModeSettings } from "./
 import { FocusController } from "./views/focusController";
 import { FocusEditorEngine } from "./views/focusEditor";
 import { FOCUS_ICON_ID, FOCUS_ICON_SVG } from "./views/focusIcon";
+import { ScribeFocusModeSettingTab } from "./settings/settingsTab";
 import { HotkeyPromptModal } from "./views/hotkeyPrompt";
 
 export default class ScribeFocusModePlugin extends Plugin {
@@ -29,10 +30,12 @@ export default class ScribeFocusModePlugin extends Plugin {
 			),
 		);
 
-		// The left ribbon is the plugin's only visible entry point; there is no settings tab.
+		// The left ribbon is the plugin's only visible entry point; the settings tab only holds the support link.
 		this.addRibbonIcon(FOCUS_ICON_ID, "(SL) Focus mode", () => this.controller.toggle()).addClass(
 			"scribe-ribbon-icon",
 		);
+
+		this.addSettingTab(new ScribeFocusModeSettingTab(this.app, this));
 
 		// No default hotkey (plugin guidelines): bind one in Hotkeys.
 		this.addCommand({

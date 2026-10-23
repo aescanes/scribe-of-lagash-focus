@@ -6,8 +6,8 @@ import { DEFAULT_FOCUS_MODE, FocusModeId, isFocusModeId } from "../data/focusMod
 import { clampKeyVolume, KEY_VOLUME } from "../data/keySound";
 
 /**
- * Persisted state. There is no settings tab: the appearance options live in
- * the focus dock, which writes the writer's last focus mode, font size, font
+ * Persisted state. The settings tab only holds the support link: the appearance
+ * options live in the focus dock, which writes the writer's last focus mode, font size, font
  * and theme here.
  */
 export interface ScribeFocusModeSettings extends FocusAppearance {
