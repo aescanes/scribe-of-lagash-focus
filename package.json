@@ -1,6 +1,6 @@
 {
 	"name": "scribe-of-lagash-focus",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"description": "Help writers concentrate on their work and remove distractions with configurable focus modes.",
 	"main": "main.js",
 	"scripts": {
