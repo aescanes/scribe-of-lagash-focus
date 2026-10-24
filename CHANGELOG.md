@@ -11,6 +11,7 @@ is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Settings: a "Scribe of Lagash series" section, above "Support", with a link
   to the series website and to the community plugin pages of the other two
   plugins.
+- README: the "Scribe of Lagash Plugins" section links to the series website.
 
 ## [1.0.1](https://github.com/aescanes/scribe-of-lagash-focus/releases/tag/1.0.1) - 2026-10-19
 
